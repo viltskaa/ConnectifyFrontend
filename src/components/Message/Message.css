@@ -1,0 +1,27 @@
+.message {
+    display: flex;
+    width: 100%;
+    gap: .3em;
+}
+
+.message.message_right {
+    justify-content: end;
+    flex-direction: row-reverse;
+}
+
+.message.message_left {
+    justify-content: start;
+    flex-direction: row;
+}
+
+.message .message_avatar {
+    background-color: #b6b6b6;
+}
+
+.message .ant-card-body {
+    padding: 0.3em;
+}
+
+.message-time {
+    font-size: 10px;
+}
