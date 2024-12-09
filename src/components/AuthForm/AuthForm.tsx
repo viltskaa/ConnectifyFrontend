@@ -25,7 +25,7 @@ const AuthForm = ({onSubmit}: AuthFormProps): React.ReactElement => {
                 name="username"
                 rules={[
                     {required: true, message: 'Please input your username!'},
-                    {min: 6, message: 'Please input your username!'},
+                    {min: 3, message: 'Please input your username!'},
                 ]}
             >
                 <Input/>
@@ -36,7 +36,7 @@ const AuthForm = ({onSubmit}: AuthFormProps): React.ReactElement => {
                 name="password"
                 rules={[
                     {required: true, message: 'Please input your password!'},
-                    {min: 8, message: 'Please input your password!'},
+                    {min: 3, message: 'Please input your password!'},
                 ]}
             >
                 <Input.Password/>

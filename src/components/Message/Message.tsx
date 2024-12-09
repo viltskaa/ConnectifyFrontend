@@ -7,7 +7,7 @@ type MessageProps = {
     message: string;
     variant: "left" | "right"
     username?: string
-    time?: string
+    time?: number
 }
 
 const Message = ({message, variant = "left", username, time}: MessageProps): React.ReactElement => {
@@ -18,8 +18,12 @@ const Message = ({message, variant = "left", username, time}: MessageProps): Rea
             </Avatar>
             <Card>
                 <Flex vertical>
-                    <span>{message}</span>
-                    <small className="text-end text-secondary message-time">{time}</small>
+                    <pre className="mb-0 px-1">{message}</pre>
+                    {time && (
+                        <small className="text-end text-secondary message-time">
+                            {new Date(time).toLocaleDateString()}
+                        </small>
+                    )}
                 </Flex>
             </Card>
         </div>

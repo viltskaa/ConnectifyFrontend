@@ -38,9 +38,10 @@ const post = async <DataType extends object | null, ReturnType> (
 ) : Promise<ReturnType | Error> => {
     try {
         const {data} : AxiosResponse<ReturnType> = await axios.post(url, params,{
+            withCredentials: false,
             headers: headers || {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
+                withCredentials: false,
                 Authorization: !isNullOrUndefined(jwt) && `Bearer ${jwt}`,
             }
         })

@@ -1,23 +1,26 @@
 import React, {useEffect, useState} from 'react'
 import './App.css'
-import {Button, Card, Divider, Flex} from "antd";
-import Message from "./components/Message/Message.tsx";
-import TextArea from "antd/es/input/TextArea";
-import {User} from "./types.ts";
+import {Card, Flex} from "antd";
+import {UserType} from "./types.ts";
 import {UserContext, UserContextType} from "./main.tsx";
 import AuthForm from "./components/AuthForm/AuthForm.tsx";
 import requests from "./api/AuthRequests.ts";
+import Chat from "./components/Chat/Chat.tsx";
 
-const loadUserFromLocalStorage = (): User | null => {
+
+const loadUserFromLocalStorage = (): UserType | null => {
     const user = localStorage.getItem('user');
     if (user) {
-        return JSON.parse(user) as User
+        return JSON.parse(user) as UserType
     }
     return null
 }
 
+const saveUserToLocalStorage = (user: UserType): void => localStorage.setItem('user', JSON.stringify(user))
+
+
 const App = (): React.ReactElement => {
-    const [user, setUser] = useState<User | null>(loadUserFromLocalStorage());
+    const [user, setUser] = useState<UserType | null>(loadUserFromLocalStorage());
     const [userContext, setUserContext] = useState<UserContextType>();
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -32,49 +35,38 @@ const App = (): React.ReactElement => {
             setJwt: (jwt: string) => setUser(x => x && ({...x, jwt})),
             setUsername: (username: string) => setUser(x => x && ({...x, username}))
         })
+
+        saveUserToLocalStorage(user)
     }, [user])
 
-    const onSubmitAuth = ({username, password}: {username?: string, password?: string}) => {
+    const onSubmitAuth = ({username, password}: { username?: string, password?: string }) => {
         if (!username || !password) return
 
         setLoading(true)
 
         const req = async () => {
-            const data = signIn(username, password).then()
-            console.log(data)
+            const jwt = await signIn(username, password)
+            if (jwt && typeof jwt === "string") {
+                setUser(() => ({username, jwt,}))
+            }
         }
+
         req().then(() => setLoading(false))
     }
 
     return (
         <>
-            {userContext && (
+            {userContext && user && (
                 <UserContext.Provider value={userContext}>
-                    <Flex gap="small" className='h-100' justify='center' vertical>
-                        <Card className="w-100 h-100">
-                            <h4 className="mb-1">Chat name</h4>
-                            <Divider/>
-                            <Flex gap={"small"} vertical>
-                                <Message message={"123456789009876543234567890"} variant={"left"} time={"11:90"}/>
-                                <Message message={"11111"} variant={"right"} time={"11:90"}/>
-                                <Message message={"11111"} variant={"left"} time={"11:90"}/>
-                                <Message message={"11111"} variant={"left"} time={"11:90"}/>
-                                <Message message={"11111"} variant={"left"} time={"11:90"}/>
-                                <Message message={"11111"} variant={"left"} time={"11:90"}/>
-                                <Message message={"11111"} variant={"left"} time={"11:90"}/>
-                            </Flex>
-                        </Card>
-                        <Flex gap={'small'}>
-                            <TextArea placeholder="Message" autoSize/>
-                            <Button type="primary">Send</Button>
-                        </Flex>
-                    </Flex>
+                    <div className="h-100 p-4">
+                        <Chat loading={loading} user={user} chatId={1}/>
+                    </div>
                 </UserContext.Provider>
             )}
             {!userContext && (
                 <Flex className='h-100' align='center' justify='center' vertical>
                     <Card loading={loading} title={"Авторизация"} className="w-25">
-                        <AuthForm onSubmit={onSubmitAuth} />
+                        <AuthForm onSubmit={onSubmitAuth}/>
                     </Card>
                 </Flex>
             )}

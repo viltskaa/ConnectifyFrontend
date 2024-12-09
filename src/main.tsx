@@ -1,9 +1,11 @@
-import React, { StrictMode } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import {StompProvider} from "./providers/Provider.tsx";
+import {StompConfig} from "@stomp/stompjs";
 
 export type UserContextType = {
     username?: string,
@@ -19,8 +21,10 @@ export const UserContext = React.createContext<UserContextType>({
     setJwt: (jwt: string) => console.log(jwt),
 })
 
+const stompConfig: StompConfig = {brokerURL: "ws://localhost:8080/chat"}
+
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  <StompProvider config={stompConfig}>
     <App />
-  </StrictMode>,
+  </StompProvider>,
 )
