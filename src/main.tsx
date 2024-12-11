@@ -1,30 +1,20 @@
 import React from 'react'
-import { createRoot } from 'react-dom/client'
+import {createRoot} from 'react-dom/client'
 import App from './App.tsx'
 
 import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {StompProvider} from "./providers/Provider.tsx";
-import {StompConfig} from "@stomp/stompjs";
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import {UserType} from "./types.ts";
 
 export type UserContextType = {
-    username?: string,
-    jwt?: string,
-    setUsername: (username: string) => void,
-    setJwt: (jwt: string) => void,
+    user?: UserType,
+    setUser: (user: UserType) => void
 }
 
 export const UserContext = React.createContext<UserContextType>({
-    username: undefined,
-    jwt: undefined,
-    setUsername: (username: string) => console.log(username),
-    setJwt: (jwt: string) => console.log(jwt),
+    user: undefined,
+    setUser: (user: UserType) => console.log(user),
 })
 
-const stompConfig: StompConfig = {brokerURL: "ws://localhost:8080/chat"}
-
-createRoot(document.getElementById('root')!).render(
-  <StompProvider config={stompConfig}>
-    <App />
-  </StompProvider>,
-)
+createRoot(document.getElementById('root')!).render(<App/>,)

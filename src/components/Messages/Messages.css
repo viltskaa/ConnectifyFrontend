@@ -8,3 +8,7 @@
     flex-direction: column;
     gap: 10px;
 }
+
+.ant-skeleton-avatar-square {
+    border-radius: 0.2rem;
+}

@@ -6,14 +6,14 @@ export interface Subscriptions {
 }
 
 export interface StompContextState {
-    stompClient: Client | null;
+    stompClient?: Client;
     subscriptions:Subscriptions
     setSubscriptions:Dispatch<SetStateAction<Subscriptions>>;
     active: boolean;
 }
 
 const defaultValue: StompContextState = {
-    stompClient:null,
+    stompClient: undefined,
     subscriptions:{},
     setSubscriptions:()=>{},
     active: false,
@@ -28,11 +28,19 @@ interface Props {
 }
 
 export const StompProvider:FC<Props> = ({children,config,onConnected})=>{
-    const [stompClient] = useState(()=> new Client(config));
+    const [stompClient, setStompClient] = useState<Client | undefined>(undefined);
     const [active, setActive] = useState<boolean>(false);
     const [subscriptions, setSubscriptions] = useState({});
 
     useEffect(() => {
+        if (config && config.connectHeaders && config.connectHeaders.authorization) {
+            setStompClient(()=> new Client(config))
+        }
+    }, [config]);
+
+    useEffect(() => {
+        if (!stompClient) return
+
         stompClient.onConnect = () => setActive(true)
         stompClient?.activate();
         onConnected?.(stompClient)
@@ -50,6 +58,5 @@ export const StompProvider:FC<Props> = ({children,config,onConnected})=>{
         }}>
             {children}
         </StompContext.Provider>
-
     )
 }

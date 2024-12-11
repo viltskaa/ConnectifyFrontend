@@ -1,26 +1,30 @@
 import React from 'react';
 import {Button, Form, FormProps, Input} from "antd";
 
-type AuthType = {
-    username?: string;
-    password?: string;
+export type SignInFormType = {
+    username: string;
+    password: string;
 };
 
-type AuthFormProps = {
-    onSubmit?: (data: AuthType) => void;
+type SignInFormProps = {
+    onSubmit?: (data: SignInFormType) => void;
+    className?: string;
+    loading?: boolean;
 }
 
-const AuthForm = ({onSubmit}: AuthFormProps): React.ReactElement => {
-    const onFinish: FormProps<AuthType>['onFinish'] = (values) => onSubmit && onSubmit(values);
+const SignInForm = ({onSubmit, className, loading = false}: SignInFormProps): React.ReactElement => {
+    const onFinish: FormProps<SignInFormType>['onFinish'] = (values) => onSubmit && onSubmit(values);
 
     return (
         <Form
-            name="basic"
+            disabled={loading}
+            className={className}
+            name="signIn"
             onFinish={onFinish}
             layout="vertical"
             autoComplete="off"
         >
-            <Form.Item<AuthType>
+            <Form.Item<SignInFormType>
                 label="Логин"
                 name="username"
                 rules={[
@@ -31,7 +35,7 @@ const AuthForm = ({onSubmit}: AuthFormProps): React.ReactElement => {
                 <Input/>
             </Form.Item>
 
-            <Form.Item<AuthType>
+            <Form.Item<SignInFormType>
                 label="Пароль"
                 name="password"
                 rules={[
@@ -51,4 +55,4 @@ const AuthForm = ({onSubmit}: AuthFormProps): React.ReactElement => {
     );
 };
 
-export default AuthForm;
+export default SignInForm;

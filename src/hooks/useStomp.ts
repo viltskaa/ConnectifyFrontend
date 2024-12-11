@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import {StompContext} from "../providers/Provider.tsx";
+import {StompContext} from "../providers/StompProvider.tsx";
 
 
 interface ObjectType<T = string> {

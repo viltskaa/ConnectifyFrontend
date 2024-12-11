@@ -1,0 +1,17 @@
+.chat-icon {
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.2s ease-in-out;
+}
+
+.chat-icon i {
+    filter: invert(1); /* Инверсия цвета */
+    mix-blend-mode: overlay;
+}
+
+.chat-icon:hover {
+    transform: scale(1.15);
+    outline: 1px var(--bs-border-style) var(--bs-border-color)!important;
+    border-radius: var(--bs-border-radius)!important;
+    padding-left: 10px;
+}

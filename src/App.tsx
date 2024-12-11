@@ -3,9 +3,16 @@ import './App.css'
 import {Card, Flex} from "antd";
 import {UserType} from "./types.ts";
 import {UserContext, UserContextType} from "./main.tsx";
-import AuthForm from "./components/AuthForm/AuthForm.tsx";
 import requests from "./api/AuthRequests.ts";
-import Chat from "./components/Chat/Chat.tsx";
+import Layout from "./components/Layout/Layout.tsx";
+import {StompConfig} from "@stomp/stompjs";
+import {StompProvider} from "./providers/StompProvider.tsx";
+import ChatProvider from "./providers/ChatProvider.tsx";
+import AuthComponent from "./components/AuthComponent/AuthComponent.tsx";
+import {Provider} from "react-redux";
+import store from "./store/store.ts";
+import WebSocketClient from "./components/WebSocketClient/WebSocketClient.tsx";
+import ChatWrapper from "./components/ChatWrapper/ChatWrapper.tsx";
 
 
 const loadUserFromLocalStorage = (): UserType | null => {
@@ -22,51 +29,59 @@ const saveUserToLocalStorage = (user: UserType): void => localStorage.setItem('u
 const App = (): React.ReactElement => {
     const [user, setUser] = useState<UserType | null>(loadUserFromLocalStorage());
     const [userContext, setUserContext] = useState<UserContextType>();
-    const [loading, setLoading] = useState<boolean>(false);
+    const [config, setConfig] = useState<StompConfig>({
+        brokerURL: "ws://localhost:8080/chat",
+        connectHeaders: {
+            authorization: `Bearer ${user?.jwt}`,
+        }
+    });
 
-    const {signIn} = requests
+    const {verify} = requests
 
     useEffect(() => {
         if (user === null) return
 
-        setUserContext({
-            username: user.username,
-            jwt: user.jwt,
-            setJwt: (jwt: string) => setUser(x => x && ({...x, jwt})),
-            setUsername: (username: string) => setUser(x => x && ({...x, username}))
-        })
-
-        saveUserToLocalStorage(user)
-    }, [user])
-
-    const onSubmitAuth = ({username, password}: { username?: string, password?: string }) => {
-        if (!username || !password) return
-
-        setLoading(true)
-
-        const req = async () => {
-            const jwt = await signIn(username, password)
-            if (jwt && typeof jwt === "string") {
-                setUser(() => ({username, jwt,}))
-            }
+        const checkJwt = async () => {
+            const data = await verify(user.jwt)
+            return typeof data === "boolean"
         }
 
-        req().then(() => setLoading(false))
-    }
+        checkJwt()
+            .then(data => {
+                console.log(data)
+                if (data) {
+                    setUserContext({
+                        user,
+                        setUser
+                    })
+
+                    setConfig(prev => ({...prev, connectHeaders: {authorization: `Bearer ${user.jwt}`}}))
+
+                    saveUserToLocalStorage(user)
+                }
+            })
+    }, [user, verify])
 
     return (
         <>
             {userContext && user && (
-                <UserContext.Provider value={userContext}>
-                    <div className="h-100 p-4">
-                        <Chat loading={loading} user={user} chatId={1}/>
-                    </div>
-                </UserContext.Provider>
+                <StompProvider config={config}>
+                    <ChatProvider>
+                        <UserContext.Provider value={userContext}>
+                            <Provider store={store}>
+                                <WebSocketClient/>
+                                <Layout>
+                                    <ChatWrapper/>
+                                </Layout>
+                            </Provider>
+                        </UserContext.Provider>
+                    </ChatProvider>
+                </StompProvider>
             )}
             {!userContext && (
                 <Flex className='h-100' align='center' justify='center' vertical>
-                    <Card loading={loading} title={"Авторизация"} className="w-25">
-                        <AuthForm onSubmit={onSubmitAuth}/>
+                    <Card title={"Авторизация"} className="w-25">
+                        <AuthComponent onFinish={setUser}/>
                     </Card>
                 </Flex>
             )}
