@@ -27,7 +27,7 @@ const Message = ({message, variant = "left", username, time, onOption, id, reply
     return (
         <div className={`message message_${variant}`}>
             <Avatar
-                className={"message_avatar"}
+                className={"message_avatar border-0 shadow-sm"}
                 shape="square"
                 src={`https://api.dicebear.com/9.x/initials/svg?seed=${username}`}
             />

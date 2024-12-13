@@ -3,7 +3,7 @@ import {ChatType, ContactRequestType, MessageType} from "../types.ts";
 
 interface ChatState {
     messages: Record<number, MessageType[]>;
-    chats: Record<number, ChatType[]>;
+    chats: Record<number, ChatType>;
     contactRequests: Record<number, ContactRequestType>
     activeChatId: number | null;
 }
@@ -31,16 +31,10 @@ const chatSlice = createSlice({
         },
         addChat(state, action: PayloadAction<ChatType>) {
             const { id } = action.payload;
-            if (!state.chats[id]) {
-                state.chats[id] = [];
-            }
-            state.chats[id].push(action.payload);
+            state.chats[id] = action.payload;
         },
         addRequest(state, action: PayloadAction<ContactRequestType>) {
             const { id } = action.payload;
-            if (!state.contactRequests[id]) {
-                state.contactRequests[id] = action.payload;
-            }
             state.contactRequests[id] = action.payload;
         }
     },

@@ -2,10 +2,11 @@ import React, {useContext, useState} from 'react';
 import {ChatType, MessageType} from "../../types.ts";
 import Messages from "../Messages/Messages.tsx";
 import PublishComponent from "../PublicComponent/PublishComponent.tsx";
-import {Button, Divider, Flex, Tooltip} from "antd";
+import {Avatar, Button, Divider, Flex, List, Modal, Tooltip} from "antd";
 import {useStomp} from "../../hooks/useStomp.ts";
 import './Chat.css'
 import {UserContext} from "../../main.tsx";
+import UserProfile from "../UserProfile/UserProfile.tsx";
 
 export type ChatProps = {
     loading?: boolean;
@@ -16,6 +17,7 @@ export type ChatProps = {
 const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement => {
     const [replyMessage, setReplyMessage] = useState<MessageType>()
     const [focused, setFocused] = useState<boolean>(false);
+    const [modalOpen, setModalOpen] = useState<boolean>(false)
     const {send, active} = useStomp()
     const {user} = useContext(UserContext)
 
@@ -40,17 +42,27 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
         <div className='d-flex flex-column max-h-100 p-4 border-0 rounded-2 shadow-sm'>
             {activeChat && (
                 <>
-                    <Flex align='center' justify='space-between'>
+                    <Flex onClick={() => setModalOpen(true)} className="chat-name" align='center' gap='small'>
+                        <Avatar
+                            style={{
+                                color: activeChat?.color,
+                                backgroundColor: "#ffffff00",
+                            }}
+                            size='large'
+                            className="border-0 shadow-sm"
+                            shape="square"
+                            icon={(<i className={activeChat?.icon || "bi bi-chat-left"}></i>)}
+                        />
                         <div className="">
-                            <h3 className="mb-1">
+                            <h3 className="mb-0">
                                 {activeChat?.chatName}
                                 <small className="text-secondary fs-6 align-text-top ms-2">#{activeChat?.id}</small>
                             </h3>
-                            <small>
-                                {`В сети ${activeChat?.users.reduce((a, b) => a + (b.online ? 1 : 0), -1)}`}
-                                {`/${activeChat?.users.length - 1}`}</small>
+                            <small className="">
+                                <i className="bi bi-circle-fill fs-small me-1 text-success"></i>
+                                {`${activeChat?.users.reduce((a, b) => a + (b.online ? 1 : 0), -1)}`}
+                            </small>
                         </div>
-                        <Button icon={<i className="bi bi-gear-wide-connected fs-3 text-dark"></i>} type='link'/>
                     </Flex>
                     <Divider/>
                     {user && (
@@ -88,6 +100,47 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                     <h4 className='text-secondary'>Для начала общения выберите чат</h4>
                 </Flex>
             )}
+            <Modal
+                open={modalOpen}
+                onCancel={() => setModalOpen(false)}
+                centered
+                footer={null}
+                title={<h3>{`Чат ${activeChat?.chatName}`}</h3>}
+            >
+                <Divider>
+                    <h6 className="text-secondary">Функции</h6>
+                </Divider>
+                <Flex gap="small" vertical>
+                    <Button size="small" icon={<i className="bi bi-sliders"/>} className="w-100">
+                        Изменить настройки чата
+                    </Button>
+                    <Button size="small" icon={<i className="bi bi-file-earmark-arrow-up"/>} className="w-100">
+                        Экспорт чата
+                    </Button>
+                    <Button size="small" icon={<i className="bi bi-trash"/>} danger className="w-100">
+                        Удалить чат
+                    </Button>
+                    <Button size="small" icon={<i className="bi bi-door-open"/>} danger className="w-100">
+                        Выйти из чата
+                    </Button>
+                </Flex>
+                <Divider>
+                    <h6 className="text-secondary">Создатель</h6>
+                </Divider>
+                <UserProfile user={activeChat?.owner}/>
+                <Divider>
+                    <h6 className="text-secondary">Участники</h6>
+                </Divider>
+                <List
+                    pagination={{position: "bottom", align: "center", pageSize: 5}}
+                    dataSource={activeChat?.users.filter(x => x.id !== activeChat?.owner.id)}
+                    renderItem={(item, index) => (
+                        <List.Item>
+                            <UserProfile user={item} key={index}/>
+                        </List.Item>
+                    )}
+                />
+            </Modal>
         </div>
     );
 };

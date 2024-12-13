@@ -24,7 +24,7 @@ const UserProfile = ({user, className, onClick, onLeave}: UserProfileProps): Rea
                         shape="square"
                         src={`https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`}
                     />
-                    <span className="ms-1"><b>@</b>{user.username}</span>
+                    <small className="ms-1 text-primary"><b>@</b>{user.username}</small>
                 </div>
             )}
             {onLeave && (

@@ -3,3 +3,16 @@
     background-color: rgb(13, 110, 253);
     border-radius: 2px;
 }
+
+.fs-small {
+    font-size: 12px;
+}
+
+.chat-name {
+    cursor: pointer;
+    transition: all .3s;
+}
+
+.chat-name:hover {
+    transform: scale(1.02);
+}

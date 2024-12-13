@@ -4,11 +4,6 @@
     transition: all 0.2s ease-in-out;
 }
 
-.chat-icon i {
-    filter: invert(1); /* Инверсия цвета */
-    mix-blend-mode: overlay;
-}
-
 .chat-icon:hover {
     transform: scale(1.08);
     padding-left: 10px;

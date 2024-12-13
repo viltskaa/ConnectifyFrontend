@@ -75,14 +75,20 @@ const ChatList = (): React.ReactElement => {
                                                    onClick={() => onChatSelectLocal(item)}>
                                             <Flex align='center' gap={"small"}>
                                                 <Avatar
-                                                    style={{backgroundColor: item.color}}
+                                                    style={{
+                                                        color: item.color,
+                                                        backgroundColor: "#ffffff00",
+                                                    }}
+                                                    className="border-0 shadow-sm"
                                                     shape="square"
                                                     icon={(<i className={item.icon || "bi bi-chat-left"}></i>)}
                                                 />
                                                 <Flex vertical>
                                                     <span className="text-truncate mb-0 fw-bold">{item.chatName}</span>
                                                     {item.lastMessage && (
-                                                        <small className='text-secondary'><b>{item.lastMessage.author.username}</b>: {item.lastMessage.text}</small>
+                                                        <small
+                                                            className='text-secondary'><b>{item.lastMessage.author.username}</b>: {item.lastMessage.text}
+                                                        </small>
                                                     )}
                                                     {!item.lastMessage && (
                                                         <small className='text-secondary'>Сообщений пока нет</small>

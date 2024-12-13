@@ -69,7 +69,7 @@ const ContactRequest = ({request, user}: ContactRequestProps): React.ReactElemen
 
     return (
         <Flex justify="space-between" align="center" className="border-0 rounded p-2 shadow-sm mb-2">
-            <Flex gap="small" align="center">
+            <Flex align="center">
                 <Avatar
                     shape="square"
                     src={`https://api.dicebear.com/9.x/initials/svg?seed=${
@@ -81,7 +81,7 @@ const ContactRequest = ({request, user}: ContactRequestProps): React.ReactElemen
                 }</small>
             </Flex>
             <div className="">
-                {tooltipWrapper(request.approved, request.canceled)}
+                {tooltipWrapper(request.approved, request.cancelled)}
                 {request && !request.approved && (
                     <>
                         {request && request.toUser.id === user.id
