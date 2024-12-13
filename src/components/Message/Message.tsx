@@ -4,6 +4,7 @@ import {Avatar, Card, Dropdown, Flex, MenuProps} from "antd";
 import './Message.css'
 import {items} from "./MenuItems.tsx";
 import {MessageType} from "../../types.ts";
+import dayjs from "dayjs";
 
 export type MessageOptions = "reply" | "forward" | "copy" | "like"
 
@@ -42,7 +43,7 @@ const Message = ({message, variant = "left", username, time, onOption, id, reply
                         <pre className="mb-0">{message}</pre>
                         {time && (
                             <small className="text-end text-secondary message-time">
-                                {new Date(time).toLocaleDateString()}
+                                {dayjs(time).format('HH:mm')}
                             </small>
                         )}
                     </Flex>

@@ -22,6 +22,7 @@ import {useSelectedChat} from "../../hooks/useSelectedChat.ts";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/store.ts";
 import {icons} from "../../icons/icons.ts";
+import UsersSearch from "../UsersSearch/UsersSearch.tsx";
 
 
 const ChatList = (): React.ReactElement => {
@@ -49,8 +50,9 @@ const ChatList = (): React.ReactElement => {
     };
 
     return (
-        <Flex className="border rounded-2 shadow-sm h-100 w-100 p-4 px-3" vertical>
+        <div className="border-0 rounded-2 shadow-sm w-100 flex-grow-1 overflow-y-scroll overflow-visible p-4 px-3">
             <Tabs
+                className="h-100"
                 defaultActiveKey="chats"
                 centered
                 items={[
@@ -66,9 +68,10 @@ const ChatList = (): React.ReactElement => {
                                             icon={<i className="bi bi-plus-lg"></i>}/>
                                 </Tooltip>
                                 <List
-                                    dataSource={chats}
+                                    className="mt-2"
+                                    dataSource={Object.values(chats).flat()}
                                     renderItem={(item, index) => (
-                                        <List.Item className="chat-icon" key={index}
+                                        <List.Item className="chat-icon border-0" key={index}
                                                    onClick={() => onChatSelectLocal(item)}>
                                             <Flex align='center' gap={"small"}>
                                                 <Avatar
@@ -95,11 +98,7 @@ const ChatList = (): React.ReactElement => {
                         key: "friends",
                         label: "Контакты",
                         icon: <i className="bi bi-people-fill"></i>,
-                        children: (
-                            <Flex vertical>
-                                <h1></h1>
-                            </Flex>
-                        )
+                        children: (<UsersSearch/>)
                     }
                 ]}
             />
@@ -179,7 +178,7 @@ const ChatList = (): React.ReactElement => {
                 </Form>
             </Modal
             >
-        </Flex>
+        </div>
     );
 };
 

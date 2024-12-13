@@ -37,13 +37,21 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const sendFirstMessage = () => sendMessage("Привет!")
 
     return (
-        <div className='d-flex flex-column max-h-100 p-4 border rounded-2 shadow-sm'>
+        <div className='d-flex flex-column max-h-100 p-4 border-0 rounded-2 shadow-sm'>
             {activeChat && (
                 <>
-                    <h3 className="mb-1">
-                        {activeChat?.chatName}
-                        <small className="text-secondary fs-6 align-text-top ms-2">#{activeChat?.id}</small>
-                    </h3>
+                    <Flex align='center' justify='space-between'>
+                        <div className="">
+                            <h3 className="mb-1">
+                                {activeChat?.chatName}
+                                <small className="text-secondary fs-6 align-text-top ms-2">#{activeChat?.id}</small>
+                            </h3>
+                            <small>
+                                {`В сети ${activeChat?.users.reduce((a, b) => a + (b.online ? 1 : 0), -1)}`}
+                                {`/${activeChat?.users.length - 1}`}</small>
+                        </div>
+                        <Button icon={<i className="bi bi-gear-wide-connected fs-3 text-dark"></i>} type='link'/>
+                    </Flex>
                     <Divider/>
                     {user && (
                         <Messages

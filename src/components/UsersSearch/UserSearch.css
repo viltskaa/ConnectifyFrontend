@@ -1,0 +1,16 @@
+.hover-scale {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.ant-tabs-content, .ant-tabs {
+    max-height: 100% !important;
+}
+
+.ant-tabs-content-holder {
+    max-height: 100% !important;
+}

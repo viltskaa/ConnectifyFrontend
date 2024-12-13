@@ -2,6 +2,8 @@ export type UserType = {
     id: number;
     username: string;
     jwt: string;
+    online: boolean;
+    lastSeen?: number;
 }
 
 export type MessageType = {
@@ -27,4 +29,17 @@ export type ChatCreateType = {
     name: string
     color: string
     icon: string
+}
+
+export type ContactRequestType = {
+    id: number
+    fromUser: UserType
+    toUser: UserType
+    approved: boolean
+    cancelled: boolean
+}
+
+export type ContactRequestCreateType = {
+    fromUser: number,
+    toUser: number,
 }

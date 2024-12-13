@@ -33,6 +33,9 @@ const App = (): React.ReactElement => {
         brokerURL: "ws://localhost:8080/chat",
         connectHeaders: {
             authorization: `Bearer ${user?.jwt}`,
+        },
+        disconnectHeaders: {
+            authorization: `Bearer ${user?.jwt}`,
         }
     });
 

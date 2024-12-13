@@ -15,10 +15,11 @@ const get = async <DataType extends object | null, ReturnType> (
     try {
         const {data} : AxiosResponse<ReturnType> = await axios.get(url, {
             params,
+            withCredentials: false,
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Authorization": !isNullOrUndefined(jwt) && `Bearer ${jwt}`,
+                withCredentials: false,
+                Authorization: !isNullOrUndefined(jwt) && `Bearer ${jwt}`,
             }
         })
         return data;

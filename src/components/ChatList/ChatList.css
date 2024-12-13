@@ -10,8 +10,6 @@
 }
 
 .chat-icon:hover {
-    transform: scale(1.15);
-    outline: 1px var(--bs-border-style) var(--bs-border-color)!important;
-    border-radius: var(--bs-border-radius)!important;
+    transform: scale(1.08);
     padding-left: 10px;
 }
