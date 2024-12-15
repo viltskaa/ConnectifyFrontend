@@ -3,7 +3,15 @@ import {useContext, useEffect} from "react";
 import {useStomp} from "../../hooks/useStomp.ts";
 import {UserContext} from "../../main.tsx";
 import {ChatType, ContactType, ContactRequestType, MessageType} from "../../types.ts";
-import {addChat, addContact, addMessage, addRequest, removeRequest} from "../../slices/chatSlice.ts";
+import {
+    addChat,
+    addContact,
+    addMessage,
+    addRequest,
+    deleteChat,
+    removeRequest,
+    updateChat
+} from "../../slices/chatSlice.ts";
 import {RootState} from "../../store/store.ts";
 
 const WebSocketClient = () => {
@@ -57,6 +65,14 @@ const WebSocketClient = () => {
             dispatch(addContact(contact))
         })
 
+        subscribe(`/topic/leaveChat/${user.id}`, (chat: ChatType) => {
+            dispatch(deleteChat(chat.id))
+        })
+
+        subscribe(`/topic/updateChat/${user.id}`, (chat: ChatType) => {
+            dispatch(updateChat(chat))
+        })
+
         return () => {
             unsubscribe(`/app/chats/${user.id}`)
             unsubscribe(`/topic/chats/${user.id}`)
@@ -64,6 +80,7 @@ const WebSocketClient = () => {
             unsubscribe(`/topic/requests/${user.id}`)
             unsubscribe(`/app/historyRequests/${user.id}`)
             unsubscribe(`/app/contacts/${user.id}`)
+            unsubscribe(`/topic/leaveChat/${user.id}`)
         }
     }, [dispatch, active, user]);
 
@@ -74,10 +91,16 @@ const WebSocketClient = () => {
             subscribe(`/topic/messages/${id}`, (message: MessageType) => {
                 dispatch(addMessage(message))
             });
+            subscribe(`/topic/deleteChat/${id}`, (chatId: number) => {
+                dispatch(deleteChat(chatId))
+            })
         })
 
         return () => {
-            Object.values(chats).flat().forEach(({id}: ChatType) => unsubscribe(`/topic/messages/${id}`))
+            Object.values(chats).flat().forEach(({id}: ChatType) => {
+                unsubscribe(`/topic/messages/${id}`)
+                unsubscribe(`/topic/deleteChat/${id}`)
+            })
         }
 
     }, [chats, dispatch, user, active]);

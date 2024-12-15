@@ -2,11 +2,13 @@ import React, {useContext, useState} from 'react';
 import {ChatType, MessageType} from "../../types.ts";
 import Messages from "../Messages/Messages.tsx";
 import PublishComponent from "../PublicComponent/PublishComponent.tsx";
-import {Avatar, Button, Divider, Flex, List, Modal, Tooltip} from "antd";
+import {Avatar, Button, Divider, Flex, List, message, Modal, Popconfirm, Tooltip} from "antd";
 import {useStomp} from "../../hooks/useStomp.ts";
 import './Chat.css'
 import {UserContext} from "../../main.tsx";
 import UserProfile from "../UserProfile/UserProfile.tsx";
+import {setActiveChat} from "../../slices/chatSlice.ts";
+import {useDispatch} from "react-redux";
 
 export type ChatProps = {
     loading?: boolean;
@@ -19,6 +21,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const [focused, setFocused] = useState<boolean>(false);
     const [modalOpen, setModalOpen] = useState<boolean>(false)
     const {send, active} = useStomp()
+    const dispatch = useDispatch();
     const {user} = useContext(UserContext)
 
     const sendMessage = (messageStr: string) => {
@@ -35,6 +38,24 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
         if (replyMessage) {
             setReplyMessage(undefined)
         }
+    }
+
+    const deleteChat = () => {
+        if (!activeChat || !active || !user) return;
+
+        send(`/app/deleteChat/${activeChat.id}`, {userId: user.id.toString()}, {})
+        setModalOpen(false)
+        dispatch(setActiveChat(null))
+        message.success(`Чат ${activeChat.chatName} успешно удален!`).then(() => {})
+    }
+
+    const leaveFromChat = () => {
+        if (!activeChat || !active || !user) return;
+
+        send(`/app/leaveChat/${activeChat.id}`, {userId: user.id.toString()}, {})
+        setModalOpen(false)
+        dispatch(setActiveChat(null))
+        message.success(`Вы успешно вышли из чата ${activeChat.chatName}`).then(() => {})
     }
 
     const sendFirstMessage = () => sendMessage("Привет!")
@@ -124,29 +145,53 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                     <Button size="small" icon={<i className="bi bi-file-earmark-arrow-up"/>} className="w-100">
                         Экспорт чата
                     </Button>
-                    <Button size="small" icon={<i className="bi bi-trash"/>} danger className="w-100">
-                        Удалить чат
-                    </Button>
-                    <Button size="small" icon={<i className="bi bi-door-open"/>} danger className="w-100">
-                        Выйти из чата
-                    </Button>
+                    {activeChat && user && activeChat.owner.id === user.id && (
+                        <Popconfirm
+                            title="Удаление чата"
+                            description="Вы точно хотите удалить чат?"
+                            onConfirm={() => deleteChat()}
+                            okText="Удалить"
+                            cancelText="Отмена"
+                        >
+                            <Button size="small" icon={<i className="bi bi-trash"/>} danger className="w-100">
+                                Удалить чат
+                            </Button>
+                        </Popconfirm>
+                    )}
+                    {activeChat && user && (
+                        <Popconfirm
+                            title="Выход из чата"
+                            description="Вы точно хотите выйти из чата?"
+                            onConfirm={() => leaveFromChat()}
+                            okText="Выйти"
+                            cancelText="Отмена"
+                        >
+                            <Button size="small" icon={<i className="bi bi-door-open"/>} danger className="w-100">
+                                Выйти из чата
+                            </Button>
+                        </Popconfirm>
+                    )}
                 </Flex>
                 <Divider>
                     <h6 className="text-secondary">Создатель</h6>
                 </Divider>
                 <UserProfile user={activeChat?.owner}/>
-                <Divider>
-                    <h6 className="text-secondary">Участники</h6>
-                </Divider>
-                <List
-                    pagination={{position: "bottom", align: "center", pageSize: 5}}
-                    dataSource={activeChat?.users.filter(x => x.id !== activeChat?.owner.id)}
-                    renderItem={(item, index) => (
-                        <List.Item>
-                            <UserProfile user={item} key={index}/>
-                        </List.Item>
-                    )}
-                />
+                {activeChat && activeChat.users && activeChat.users.length > 1 && (
+                    <>
+                        <Divider>
+                            <h6 className="text-secondary">Участники</h6>
+                        </Divider>
+                        <List
+                            pagination={{position: "bottom", align: "center", pageSize: 5}}
+                            dataSource={activeChat.users.filter(x => x.id !== activeChat.owner.id)}
+                            renderItem={(item, index) => (
+                                <List.Item>
+                                    <UserProfile user={item} key={index}/>
+                                </List.Item>
+                            )}
+                        />
+                    </>
+                )}
             </Modal>
         </div>
     );

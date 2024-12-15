@@ -9,24 +9,19 @@ import {
 } from "antd";
 import "./ChatList.css"
 import {ChatType} from "../../types.ts";
-import {useSelectedChat} from "../../hooks/useSelectedChat.ts";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/store.ts";
 import UsersSearch from "../UsersSearch/UsersSearch.tsx";
 import ChatCreate from "../ChatCreate/ChatCreate.tsx";
+import {setActiveChat} from "../../slices/chatSlice.ts";
 
 
 const ChatList = (): React.ReactElement => {
+    const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {chats} = useSelector((state: RootState) => state.chat);
-    const {setSelectedChat} = useSelectedChat()
 
-
-    const onChatSelectLocal = (chat: ChatType) => {
-        if (setSelectedChat) {
-            setSelectedChat(chat);
-        }
-    }
+    const onChatSelectLocal = ({id}: ChatType) => dispatch(setActiveChat(id))
 
     const showModal = () => setIsModalOpen(true);
 

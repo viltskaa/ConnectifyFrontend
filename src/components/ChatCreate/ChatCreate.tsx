@@ -1,5 +1,19 @@
 import React, {useContext, useState} from 'react';
-import {Avatar, Button, ColorPicker, Divider, Flex, Form, FormProps, Input, Modal, Progress, Select, Space} from "antd";
+import {
+    Avatar,
+    Button,
+    ColorPicker,
+    Divider,
+    Flex,
+    Form,
+    FormProps,
+    Input,
+    message,
+    Modal,
+    Progress,
+    Select,
+    Space
+} from "antd";
 import {ChatCreateType} from "../../types.ts";
 import {icons} from "../../icons/icons.ts";
 import {useStomp} from "../../hooks/useStomp.ts";
@@ -29,6 +43,7 @@ const ChatCreate = ({open, onClose}: ChatCreateProps): React.ReactElement => {
             onClose();
             form.resetFields()
             setPercents(0)
+            message.success(`Чат ${values.name} успешно создан!`)
         }
     };
 

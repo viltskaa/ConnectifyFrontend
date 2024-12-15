@@ -7,7 +7,6 @@ import requests from "./api/AuthRequests.ts";
 import Layout from "./components/Layout/Layout.tsx";
 import {StompConfig} from "@stomp/stompjs";
 import {StompProvider} from "./providers/StompProvider.tsx";
-import ChatProvider from "./providers/ChatProvider.tsx";
 import AuthComponent from "./components/AuthComponent/AuthComponent.tsx";
 import {Provider} from "react-redux";
 import store from "./store/store.ts";
@@ -71,16 +70,14 @@ const App = (): React.ReactElement => {
         <>
             {userContext && user && (
                 <StompProvider config={config}>
-                    <ChatProvider>
-                        <UserContext.Provider value={userContext}>
-                            <Provider store={store}>
-                                <WebSocketClient/>
-                                <Layout>
-                                    <ChatWrapper/>
-                                </Layout>
-                            </Provider>
-                        </UserContext.Provider>
-                    </ChatProvider>
+                    <UserContext.Provider value={userContext}>
+                        <Provider store={store}>
+                            <WebSocketClient/>
+                            <Layout>
+                                <ChatWrapper/>
+                            </Layout>
+                        </Provider>
+                    </UserContext.Provider>
                 </StompProvider>
             )}
             {!user && (
