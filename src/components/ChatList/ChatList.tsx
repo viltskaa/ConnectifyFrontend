@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Avatar,
     Button,
@@ -14,16 +14,31 @@ import {RootState} from "../../store/store.ts";
 import UsersSearch from "../UsersSearch/UsersSearch.tsx";
 import ChatCreate from "../ChatCreate/ChatCreate.tsx";
 import {setActiveChat} from "../../slices/chatSlice.ts";
+import DelayedInput from "../DelayedInput/DelayedInput.tsx";
 
 
 const ChatList = (): React.ReactElement => {
     const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {chats} = useSelector((state: RootState) => state.chat);
+    const [filteredChats, setFilteredChats] = useState<ChatType[]>([]);
+
+    useEffect(() => {
+        setFilteredChats(Object.values(chats).flat());
+    }, [chats]);
 
     const onChatSelectLocal = (chat: ChatType) => dispatch(setActiveChat(chat))
 
     const showModal = () => setIsModalOpen(true);
+
+    const onSearchChats = (value: string) => {
+        if (value.length == 0) {
+            setFilteredChats(Object.values(chats).flat());
+        }
+
+        setFilteredChats(() => Object.values(chats)
+            .flat().filter(chat => chat.chatName.toLowerCase().includes(value.toLowerCase())))
+    }
 
     return (
         <div className="border-0 rounded-2 shadow-sm w-100 flex-grow-1 overflow-y-scroll overflow-visible p-4 px-3">
@@ -43,9 +58,16 @@ const ChatList = (): React.ReactElement => {
                                             onClick={() => showModal()}
                                             icon={<i className="bi bi-plus-lg"></i>}/>
                                 </Tooltip>
+                                <DelayedInput
+                                    className={"mt-2"}
+                                    timeoutValue={500}
+                                    placeholder={"Поиск чатов"}
+                                    onChange={onSearchChats}
+                                />
                                 <List
                                     className="mt-2"
-                                    dataSource={Object.values(chats).flat()}
+                                    dataSource={filteredChats}
+                                    locale={{emptyText: "Чаты не найдены"}}
                                     renderItem={(item, index) => (
                                         <List.Item className="chat-icon border-0" key={index}
                                                    onClick={() => onChatSelectLocal(item)}>

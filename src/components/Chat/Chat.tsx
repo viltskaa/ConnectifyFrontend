@@ -10,6 +10,7 @@ import UserProfile from "../UserProfile/UserProfile.tsx";
 import {setActiveChat} from "../../slices/chatSlice.ts";
 import {useDispatch} from "react-redux";
 import UsersModal from "../UsersModal/UsersModal.tsx";
+import ChatUpdate from "../ChatUpdate/ChatUpdate.tsx";
 
 export type ChatProps = {
     loading?: boolean;
@@ -22,6 +23,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const [focused, setFocused] = useState<boolean>(false);
     const [modalOpen, setModalOpen] = useState<boolean>(false)
     const [usersModalOpen, setUsersModalOpen] = useState<boolean>(false)
+    const [chatEditModalOpen, setChatEditModalOpen] = useState<boolean>(false)
     const {send, active} = useStomp()
     const dispatch = useDispatch();
     const {user} = useContext(UserContext)
@@ -159,14 +161,24 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                     <h6 className="text-secondary">Функции</h6>
                 </Divider>
                 <Flex gap="small" vertical>
-                    <Button size="small" icon={<i className="bi bi-sliders"/>} className="w-100">
-                        Изменить настройки чата
-                    </Button>
-                    <Button size="small" icon={<i className="bi bi-file-earmark-arrow-up"/>} className="w-100">
-                        Экспорт чата
-                    </Button>
                     {activeChat && user && activeChat.owner.id === user.id && (
                         <>
+                            <Button
+                                onClick={() => setChatEditModalOpen(true)}
+                                size="small"
+                                icon={<i className="bi bi-sliders"/>}
+                                className="w-100"
+                            >
+                                Изменить настройки чата
+                            </Button>
+                            <ChatUpdate
+                                open={chatEditModalOpen}
+                                onClose={() => setChatEditModalOpen(false)}
+                                chat={activeChat}
+                            />
+                            <Button size="small" icon={<i className="bi bi-file-earmark-arrow-up"/>} className="w-100">
+                                Экспорт чата
+                            </Button>
                             <Button
                                 onClick={() => setUsersModalOpen(true)}
                                 size="small"

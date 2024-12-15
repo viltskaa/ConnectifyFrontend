@@ -6,9 +6,16 @@ type DelayedInputProps = {
     placeholder?: string;
     onChange?: (value: string) => void;
     loading?: boolean;
+    className?: string;
 }
 
-const DelayedInput = ({timeoutValue, onChange, placeholder, loading}: DelayedInputProps): React.ReactElement => {
+const DelayedInput = ({
+                          timeoutValue,
+                          onChange,
+                          placeholder,
+                          loading,
+                          className
+                      }: DelayedInputProps): React.ReactElement => {
     const [inputValue, setInputValue] = useState('');
     const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -27,6 +34,7 @@ const DelayedInput = ({timeoutValue, onChange, placeholder, loading}: DelayedInp
 
     return (
         <Input
+            className={className}
             type="text"
             value={inputValue}
             onChange={handleInputChange}
