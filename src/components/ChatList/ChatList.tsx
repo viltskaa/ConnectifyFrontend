@@ -86,8 +86,9 @@ const ChatList = (): React.ReactElement => {
                                                         icon={(<i className={item.icon || "bi bi-chat-left"}></i>)}
                                                     />
                                                 }
-                                                title={<span
-                                                    className="text-truncate mb-0 fw-bold">{item.chatName}</span>}
+                                                title={
+                                                    <span className="text-truncate mb-0 fw-bold">{item.chatName}</span>
+                                                }
                                                 description={
                                                     <>
                                                         {item.lastMessage && (

@@ -1,0 +1,8 @@
+.chat-select {
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.chat-select:hover {
+    opacity: 0.45;
+}

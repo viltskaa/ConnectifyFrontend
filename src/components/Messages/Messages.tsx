@@ -10,15 +10,24 @@ export type MessagesProps = {
     user: UserType
     loading?: boolean
     onReply?: (reply: MessageType) => void
+    onForward?: (forward: MessageType) => void
     onFirstMessage?: () => void
     selectedMessage?: MessageType
 }
 
-const Messages = ({messages, user, loading, onReply, onFirstMessage, selectedMessage}: MessagesProps): React.ReactElement => {
+const Messages = ({
+                      messages,
+                      user,
+                      loading,
+                      onReply,
+                      onForward,
+                      onFirstMessage,
+                      selectedMessage
+                  }: MessagesProps): React.ReactElement => {
     const ref = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const scrollToBottom = () => ref.current?.scrollIntoView({ behavior: "smooth" })
+    const scrollToBottom = () => ref.current?.scrollIntoView({behavior: "smooth"})
 
     useEffect(() => {
         scrollToBottom()
@@ -32,7 +41,7 @@ const Messages = ({messages, user, loading, onReply, onFirstMessage, selectedMes
                 if (element) {
                     element.classList.add("highlight");
                     setTimeout(() => element.classList.remove('highlight'), 2000);
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    element.scrollIntoView({behavior: 'smooth', block: 'center'});
                 }
             }
         }
@@ -44,6 +53,11 @@ const Messages = ({messages, user, loading, onReply, onFirstMessage, selectedMes
             if (replayedMessage) {
                 onReply(replayedMessage)
                 scrollToBottom()
+            }
+        } else if (onForward && option === 'forward') {
+            const forwardMessage = messages.find(e => e.id === id)
+            if (forwardMessage) {
+                onForward(forwardMessage)
             }
         }
     }

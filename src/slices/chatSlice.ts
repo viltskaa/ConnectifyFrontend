@@ -7,6 +7,7 @@ interface ChatState {
     contactRequests: Record<number, ContactRequestType>;
     contacts: Record<number, ContactType>;
     activeChat: ChatType | null;
+    forwardMessage: MessageType | null;
 }
 
 const initialState: ChatState = {
@@ -15,6 +16,7 @@ const initialState: ChatState = {
     contactRequests: {},
     contacts: {},
     activeChat: null,
+    forwardMessage: null,
 };
 
 const chatSlice = createSlice({
@@ -23,6 +25,9 @@ const chatSlice = createSlice({
     reducers: {
         setActiveChat(state, action: PayloadAction<ChatType | null>) {
             state.activeChat = action.payload;
+        },
+        setForwardMessage(state, action: PayloadAction<MessageType | null>) {
+            state.forwardMessage = action.payload;
         },
         addMessage(state, action: PayloadAction<MessageType>) {
             const {chatId} = action.payload;
@@ -71,6 +76,7 @@ export const {
     addContact,
     removeRequest,
     deleteChat,
-    updateChat
+    updateChat,
+    setForwardMessage
 } = chatSlice.actions;
 export default chatSlice.reducer;

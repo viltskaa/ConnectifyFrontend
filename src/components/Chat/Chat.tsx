@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ChatType, ContactType, MessageType, UserType} from "../../types.ts";
 import Messages from "../Messages/Messages.tsx";
 import PublishComponent from "../PublishComponent/PublishComponent.tsx";
@@ -7,11 +7,13 @@ import {useStomp} from "../../hooks/useStomp.ts";
 import './Chat.css'
 import {UserContext} from "../../main.tsx";
 import UserProfile from "../UserProfile/UserProfile.tsx";
-import {setActiveChat} from "../../slices/chatSlice.ts";
-import {useDispatch} from "react-redux";
+import {setActiveChat, setForwardMessage} from "../../slices/chatSlice.ts";
+import {useDispatch, useSelector} from "react-redux";
 import UsersModal from "../UsersModal/UsersModal.tsx";
 import ChatUpdate from "../ChatUpdate/ChatUpdate.tsx";
 import MessageFinder from "../MessageFinder/MessageFinder.tsx";
+import ChatSelectModal from "../ChatsSelectModal/ChatSelectModal.tsx";
+import {RootState} from "../../store/store.ts";
 
 export type ChatProps = {
     loading?: boolean;
@@ -20,16 +22,26 @@ export type ChatProps = {
 }
 
 const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement => {
+    const {forwardMessage} = useSelector((state: RootState) => state.chat);
+
     const [replyMessage, setReplyMessage] = useState<MessageType>()
     const [focused, setFocused] = useState<boolean>(false);
     const [modalOpen, setModalOpen] = useState<boolean>(false)
     const [usersModalOpen, setUsersModalOpen] = useState<boolean>(false)
     const [chatEditModalOpen, setChatEditModalOpen] = useState<boolean>(false)
     const [messageFinderOpen, setMessageFinderOpen] = useState<boolean>(false)
+    const [chatSelectModalOpen, setChatSelectModalOpen] = useState<boolean>(false)
     const [selectedMessage, setSelectedMessage] = useState<MessageType>()
     const {send, active} = useStomp()
     const dispatch = useDispatch();
     const {user} = useContext(UserContext)
+
+    useEffect(() => {
+        if (forwardMessage) {
+            setReplyMessage(forwardMessage)
+            dispatch(setForwardMessage(null))
+        }
+    }, [dispatch, forwardMessage])
 
     const sendMessage = (messageStr: string) => {
         if (!user || !user.id || !activeChat || !active) return;
@@ -90,6 +102,21 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
         setSelectedMessage(selectedMessage)
     }
 
+    const onForwardMessageSelect = (message: MessageType) => {
+        setChatSelectModalOpen(true)
+        dispatch(setForwardMessage(message))
+    }
+
+    const onCancelForwardMessage = () => {
+        setChatSelectModalOpen(false)
+        dispatch(setForwardMessage(null))
+    }
+
+    const onSelectChatToForwardMessage = (chat: ChatType) => {
+        setChatSelectModalOpen(false)
+        dispatch(setActiveChat(chat))
+    }
+
     return (
         <div className='d-flex flex-column max-h-100 p-4 border-0 rounded-2 shadow-sm'>
             {activeChat && messages && (
@@ -126,6 +153,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                                 setReplyMessage(msg)
                                 setFocused(true)
                             }}
+                            onForward={onForwardMessageSelect}
                             onFirstMessage={sendFirstMessage}
                             selectedMessage={selectedMessage}
                         />
@@ -278,6 +306,12 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                     </>
                 )}
             </Modal>
+            <ChatSelectModal
+                open={chatSelectModalOpen}
+                onClose={() => setChatSelectModalOpen(false)}
+                onSelect={onSelectChatToForwardMessage}
+                onCancel={onCancelForwardMessage}
+            />
         </div>
     );
 };
