@@ -6,7 +6,7 @@ interface ChatState {
     chats: Record<number, ChatType>;
     contactRequests: Record<number, ContactRequestType>;
     contacts: Record<number, ContactType>;
-    activeChatId: number | null;
+    activeChat: ChatType | null;
 }
 
 const initialState: ChatState = {
@@ -14,15 +14,15 @@ const initialState: ChatState = {
     chats: {},
     contactRequests: {},
     contacts: {},
-    activeChatId: null,
+    activeChat: null,
 };
 
 const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        setActiveChat(state, action: PayloadAction<number | null>) {
-            state.activeChatId = action.payload;
+        setActiveChat(state, action: PayloadAction<ChatType | null>) {
+            state.activeChat = action.payload;
         },
         addMessage(state, action: PayloadAction<MessageType>) {
             const {chatId} = action.payload;
@@ -49,7 +49,12 @@ const chatSlice = createSlice({
         },
         updateChat(state, action: PayloadAction<ChatType>) {
             const {id} = action.payload;
-            state.chats[id] = action.payload;
+            if (state.chats[id]) {
+                state.chats[id] = {...state.chats[id], ...action.payload};
+                if (state.activeChat && state.activeChat.id === id) {
+                    state.activeChat = {...state.chats[id], ...action.payload};
+                }
+            }
         },
         addContact(state, action: PayloadAction<ContactType>) {
             const {id} = action.payload;

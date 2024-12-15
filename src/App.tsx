@@ -57,7 +57,6 @@ const App = (): React.ReactElement => {
 
         checkJwt()
             .then(data => {
-                console.log(data)
                 if (data) {
                     setUserContext({user, setUser, logout})
                     setConfig(prev => ({...prev, connectHeaders: {authorization: `Bearer ${user.jwt}`}}))

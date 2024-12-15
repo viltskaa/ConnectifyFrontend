@@ -32,6 +32,7 @@ const DelayedInput = ({timeoutValue, onChange, placeholder, loading}: DelayedInp
             onChange={handleInputChange}
             placeholder={placeholder}
             disabled={loading}
+            allowClear
         />
     );
 };

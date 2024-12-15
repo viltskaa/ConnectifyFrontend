@@ -21,7 +21,7 @@ const ChatList = (): React.ReactElement => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {chats} = useSelector((state: RootState) => state.chat);
 
-    const onChatSelectLocal = ({id}: ChatType) => dispatch(setActiveChat(id))
+    const onChatSelectLocal = (chat: ChatType) => dispatch(setActiveChat(chat))
 
     const showModal = () => setIsModalOpen(true);
 

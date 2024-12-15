@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
-import {ChatType, MessageType} from "../../types.ts";
+import {ChatType, ContactType, MessageType} from "../../types.ts";
 import Messages from "../Messages/Messages.tsx";
-import PublishComponent from "../PublicComponent/PublishComponent.tsx";
+import PublishComponent from "../PublishComponent/PublishComponent.tsx";
 import {Avatar, Button, Divider, Flex, List, message, Modal, Popconfirm, Tooltip} from "antd";
 import {useStomp} from "../../hooks/useStomp.ts";
 import './Chat.css'
@@ -9,10 +9,11 @@ import {UserContext} from "../../main.tsx";
 import UserProfile from "../UserProfile/UserProfile.tsx";
 import {setActiveChat} from "../../slices/chatSlice.ts";
 import {useDispatch} from "react-redux";
+import UsersModal from "../UsersModal/UsersModal.tsx";
 
 export type ChatProps = {
     loading?: boolean;
-    messages: MessageType[]
+    messages?: MessageType[]
     activeChat?: ChatType;
 }
 
@@ -20,6 +21,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const [replyMessage, setReplyMessage] = useState<MessageType>()
     const [focused, setFocused] = useState<boolean>(false);
     const [modalOpen, setModalOpen] = useState<boolean>(false)
+    const [usersModalOpen, setUsersModalOpen] = useState<boolean>(false)
     const {send, active} = useStomp()
     const dispatch = useDispatch();
     const {user} = useContext(UserContext)
@@ -58,11 +60,21 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
         message.success(`Вы успешно вышли из чата ${activeChat.chatName}`).then(() => {})
     }
 
+    const appendChat = (contacts: ContactType[]) => {
+        if (!activeChat || !active || !user || !contacts || contacts.length === 0) return;
+
+        send(`/app/appendChat/${activeChat.id}`, {
+            users: contacts.map((contact: ContactType) => contact.contact.id).toString()
+        }, {})
+        setUsersModalOpen(false)
+        message.success(`Вы успешно добавили пользователей в чат`).then(() => {setModalOpen(false)})
+    }
+
     const sendFirstMessage = () => sendMessage("Привет!")
 
     return (
         <div className='d-flex flex-column max-h-100 p-4 border-0 rounded-2 shadow-sm'>
-            {activeChat && (
+            {activeChat && messages && (
                 <>
                     <Flex onClick={() => setModalOpen(true)} className="chat-name" align='center' gap='small'>
                         <Avatar
@@ -77,12 +89,12 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                         />
                         <div className="">
                             <h3 className="mb-0">
-                                {activeChat?.chatName}
-                                <small className="text-secondary fs-6 align-text-top ms-2">#{activeChat?.id}</small>
+                                {activeChat.chatName}
+                                <small className="text-secondary fs-6 align-text-top ms-2">#{activeChat.id}</small>
                             </h3>
                             <small className="">
                                 <i className="bi bi-circle-fill fs-small me-1 text-success"></i>
-                                {`${activeChat?.users.reduce((a, b) => a + (b.online ? 1 : 0), -1)}`}
+                                {`${activeChat.users.reduce((a, b) => a + (b.online ? 1 : 0), -1)}`}
                             </small>
                         </div>
                     </Flex>
@@ -146,17 +158,22 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                         Экспорт чата
                     </Button>
                     {activeChat && user && activeChat.owner.id === user.id && (
-                        <Popconfirm
-                            title="Удаление чата"
-                            description="Вы точно хотите удалить чат?"
-                            onConfirm={() => deleteChat()}
-                            okText="Удалить"
-                            cancelText="Отмена"
-                        >
-                            <Button size="small" icon={<i className="bi bi-trash"/>} danger className="w-100">
-                                Удалить чат
+                        <>
+                            <Button
+                                onClick={() => setUsersModalOpen(true)}
+                                size="small"
+                                icon={<i className="bi bi-person-plus"/>}
+                                className="w-100"
+                            >
+                                Добавить пользователей в чат
                             </Button>
-                        </Popconfirm>
+                            <UsersModal
+                                open={usersModalOpen}
+                                chatUsers={activeChat.users.map(user => user.id)}
+                                onClose={() => setUsersModalOpen(false)}
+                                onFinish={appendChat}
+                            />
+                        </>
                     )}
                     {activeChat && user && (
                         <Popconfirm
@@ -168,6 +185,19 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                         >
                             <Button size="small" icon={<i className="bi bi-door-open"/>} danger className="w-100">
                                 Выйти из чата
+                            </Button>
+                        </Popconfirm>
+                    )}
+                    {activeChat && user && activeChat.owner.id === user.id && (
+                        <Popconfirm
+                            title="Удаление чата"
+                            description="Вы точно хотите удалить чат?"
+                            onConfirm={() => deleteChat()}
+                            okText="Удалить"
+                            cancelText="Отмена"
+                        >
+                            <Button type="primary" size="small" icon={<i className="bi bi-trash"/>} danger className="w-100">
+                                Удалить чат
                             </Button>
                         </Popconfirm>
                     )}
