@@ -3,7 +3,7 @@ import Message, {MessageOptions} from "../Message/Message.tsx";
 import {MessageType, UserType} from "../../types.ts";
 import "./Messages.css"
 import SkeletonMessage from "./SkeletonMessage.tsx";
-import {Button, Flex} from "antd";
+import {Button, Flex, message} from "antd";
 
 export type MessagesProps = {
     messages: MessageType[]
@@ -58,6 +58,13 @@ const Messages = ({
             const forwardMessage = messages.find(e => e.id === id)
             if (forwardMessage) {
                 onForward(forwardMessage)
+            }
+        } else if (option === 'copy') {
+            const copyMessage = messages.find(e => e.id === id)
+            if (copyMessage) {
+                navigator.clipboard
+                    .writeText(copyMessage.text)
+                    .then(() => message.success("Успешно копирование"))
             }
         }
     }

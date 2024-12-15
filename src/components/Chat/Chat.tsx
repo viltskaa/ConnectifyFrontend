@@ -192,7 +192,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                 onCancel={() => setModalOpen(false)}
                 centered
                 footer={null}
-                title={<h3>{`Чат ${activeChat?.chatName}`}</h3>}
+                title={<h3>{activeChat?.chatName}</h3>}
                 forceRender
             >
                 <Divider>
