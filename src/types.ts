@@ -6,6 +6,8 @@ export type UserType = {
     lastSeen?: number;
 }
 
+export type MessageCodeType = "ENTER" | "LEAVE" | "INVITE" | "COMMON" | null
+
 export type MessageType = {
     id: number
     text: string
@@ -13,6 +15,7 @@ export type MessageType = {
     author: UserType
     chatId: number,
     replyTo: MessageType
+    type: MessageCodeType
 }
 
 export type ChatType = {

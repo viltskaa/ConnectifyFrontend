@@ -22,13 +22,14 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const {user} = useContext(UserContext)
 
     const sendMessage = (messageStr: string) => {
-        if (!user || !user.jwt || !activeChat || !active) return;
+        if (!user || !user.id || !activeChat || !active) return;
 
         const message = {
             text: messageStr,
-            jwt: user?.jwt,
+            userId: user?.id.toString(),
             replyId: replyMessage?.id.toString() || "null",
             chatId: activeChat.id.toString(),
+            type: "COMMON"
         }
         send(`/app/sendMessage/${user.id}`, message, {})
         if (replyMessage) {

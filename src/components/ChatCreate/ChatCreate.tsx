@@ -27,6 +27,8 @@ const ChatCreate = ({open, onClose}: ChatCreateProps): React.ReactElement => {
                 ownerId: user.id.toString()
             }, {})
             onClose();
+            form.resetFields()
+            setPercents(0)
         }
     };
 

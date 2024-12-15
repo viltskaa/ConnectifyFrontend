@@ -77,7 +77,7 @@ const UsersSearch = (): React.ReactElement => {
                         <Divider>Контакты</Divider>
                         {Object
                             .values(contacts)
-                            .flatMap((contact) => <Contact contact={contact}/>)}
+                            .flatMap((contact) => <Contact key={contact.id} contact={contact}/>)}
                     </>
                 )}
                 {user && Object.values(contactRequests).filter(cr => !cr.cancelled && !cr.approved).length > 0 && (
