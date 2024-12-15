@@ -23,7 +23,7 @@ const ChatCreate = ({open, onClose}: ChatCreateProps): React.ReactElement => {
         if (user && user.id && active) {
             send(`/app/createChat/${user.id}`, {
                 ...values,
-                users: [1].toString(),
+                users: values.users.toString(),
                 ownerId: user.id.toString()
             }, {})
             onClose();
