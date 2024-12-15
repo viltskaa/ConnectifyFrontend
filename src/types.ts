@@ -29,6 +29,7 @@ export type ChatCreateType = {
     name: string
     color: string
     icon: string
+    users: number[]
 }
 
 export type ContactRequestType = {

@@ -1,9 +1,11 @@
-import React, {useContext} from 'react';
-import {Avatar, Button, ColorPicker, Divider, Flex, Form, FormProps, Input, Modal, Select, Space} from "antd";
+import React, {useContext, useState} from 'react';
+import {Avatar, Button, ColorPicker, Divider, Flex, Form, FormProps, Input, Modal, Progress, Select, Space} from "antd";
 import {ChatCreateType} from "../../types.ts";
 import {icons} from "../../icons/icons.ts";
 import {useStomp} from "../../hooks/useStomp.ts";
 import {UserContext} from "../../main.tsx";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/store.ts";
 
 type ChatCreateProps = {
     open: boolean;
@@ -14,13 +16,23 @@ const ChatCreate = ({open, onClose}: ChatCreateProps): React.ReactElement => {
     const [form] = Form.useForm();
     const {send, active} = useStomp()
     const {user} = useContext(UserContext)
+    const {contacts} = useSelector((state: RootState) => state.chat);
+    const [percents, setPercents] = useState<number>(0)
 
     const onFinish: FormProps<ChatCreateType>['onFinish'] = (values) => {
         if (user && user.id && active) {
-            send(`/app/createChat/${user.id}`, {...values, ownerId: user.id.toString()}, {})
+            send(`/app/createChat/${user.id}`, {
+                ...values,
+                users: [1].toString(),
+                ownerId: user.id.toString()
+            }, {})
             onClose();
         }
     };
+
+    const onValuesChange = (_: unknown, values: ChatCreateType) => {
+        setPercents(() => (4 - Object.values(values).filter(x => !x).length) * 25)
+    }
 
     return (
         <Modal
@@ -34,6 +46,7 @@ const ChatCreate = ({open, onClose}: ChatCreateProps): React.ReactElement => {
                 name="chat"
                 layout="vertical"
                 onFinish={onFinish}
+                onValuesChange={onValuesChange}
                 autoComplete="off"
             >
                 <Form.Item<ChatCreateType>
@@ -117,8 +130,34 @@ const ChatCreate = ({open, onClose}: ChatCreateProps): React.ReactElement => {
                     )}
                 </Form.Item>
 
+                <Divider>Пользователи чата</Divider>
+                <Form.Item<ChatCreateType>
+                    name="users"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please select users!',
+                        }
+                    ]}
+                >
+                    <Select
+                        mode="multiple"
+                        options={Object.values(contacts).flatMap(contact => ({
+                            label: contact.contact.username,
+                            value: contact.contact.id
+                        }))}
+                        filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                        }
+                        showSearch
+                    />
+                </Form.Item>
+
+                <Divider>Процесс создания чата</Divider>
+                <Progress className="mb-2" percent={percents} status="active"/>
+
                 <Form.Item className="w-100 mb-0" label={null}>
-                    <Button type="primary" className="w-100" htmlType="submit">
+                    <Button disabled={percents !== 100} type="primary" className="w-100" htmlType="submit">
                         Создать
                     </Button>
                 </Form.Item>
