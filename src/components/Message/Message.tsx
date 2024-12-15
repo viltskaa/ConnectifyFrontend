@@ -5,6 +5,7 @@ import './Message.css'
 import {items} from "./MenuItems.tsx";
 import {MessageType} from "../../types.ts";
 import dayjs from "dayjs";
+import HighlightAtWords from "../HighlightAtWords/HighlightAtWords.tsx";
 
 export type MessageOptions = "reply" | "forward" | "copy" | "like"
 
@@ -17,18 +18,6 @@ export type MessageProps = {
     onOption?: (option: MessageOptions, id: number) => void
     reply?: MessageType
 }
-
-
-const HighlightAtWords = (text: string, className?: string): React.ReactElement => {
-    const highlightedText = text.split(/(\s+)/).map((word, index) => {
-        if (word.startsWith("@")) {
-            return (<span key={index} className="text-primary fw-bold">{word}</span>);
-        }
-        return word;
-    });
-
-    return <pre className={className}>{highlightedText}</pre>;
-};
 
 const Message = ({
                      message,
@@ -45,7 +34,7 @@ const Message = ({
     };
 
     return (
-        <div className={`message message_${variant}`}>
+        <div className={`message message_${variant} p-1`}>
             <Avatar
                 className={"message_avatar border-0 shadow-sm"}
                 shape="square"
@@ -60,7 +49,10 @@ const Message = ({
                                 <small className="fw-light text-truncate">{reply.text}</small>
                             </Flex>
                         )}
-                        {HighlightAtWords(message, "mb-0")}
+                        <HighlightAtWords
+                            text={message}
+                            className="mb-0"
+                        />
                         {time && (
                             <small className="text-end text-secondary message-time">
                                 {dayjs(time).format('HH:mm')}

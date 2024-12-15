@@ -11,16 +11,32 @@ export type MessagesProps = {
     loading?: boolean
     onReply?: (reply: MessageType) => void
     onFirstMessage?: () => void
+    selectedMessage?: MessageType
 }
 
-const Messages = ({messages, user, loading, onReply, onFirstMessage}: MessagesProps): React.ReactElement => {
+const Messages = ({messages, user, loading, onReply, onFirstMessage, selectedMessage}: MessagesProps): React.ReactElement => {
     const ref = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => ref.current?.scrollIntoView({ behavior: "smooth" })
 
     useEffect(() => {
         scrollToBottom()
     }, [messages]);
+
+    useEffect(() => {
+        if (selectedMessage?.id && containerRef.current) {
+            const index = messages.findIndex((msg) => msg.id === selectedMessage.id);
+            if (index !== -1) {
+                const element = containerRef.current.children[index] as HTMLDivElement;
+                if (element) {
+                    element.classList.add("highlight");
+                    setTimeout(() => element.classList.remove('highlight'), 2000);
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+    }, [messages, selectedMessage]);
 
     const onOption = (option: MessageOptions, id: number) => {
         if (onReply && option === 'reply') {
@@ -33,7 +49,7 @@ const Messages = ({messages, user, loading, onReply, onFirstMessage}: MessagesPr
     }
 
     return (
-        <div className="messages">
+        <div ref={containerRef} className="messages">
             {messages && messages.length == 0 && (
                 <Flex className='h-100' justify='center' align='center' vertical>
                     <h3>Тут пока пусто</h3>

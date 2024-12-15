@@ -11,6 +11,7 @@ import {setActiveChat} from "../../slices/chatSlice.ts";
 import {useDispatch} from "react-redux";
 import UsersModal from "../UsersModal/UsersModal.tsx";
 import ChatUpdate from "../ChatUpdate/ChatUpdate.tsx";
+import MessageFinder from "../MessageFinder/MessageFinder.tsx";
 
 export type ChatProps = {
     loading?: boolean;
@@ -24,6 +25,8 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const [modalOpen, setModalOpen] = useState<boolean>(false)
     const [usersModalOpen, setUsersModalOpen] = useState<boolean>(false)
     const [chatEditModalOpen, setChatEditModalOpen] = useState<boolean>(false)
+    const [messageFinderOpen, setMessageFinderOpen] = useState<boolean>(false)
+    const [selectedMessage, setSelectedMessage] = useState<MessageType>()
     const {send, active} = useStomp()
     const dispatch = useDispatch();
     const {user} = useContext(UserContext)
@@ -82,6 +85,11 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
 
     const sendFirstMessage = () => sendMessage("Привет!")
 
+    const onSelectMessage = (selectedMessage: MessageType) => {
+        setModalOpen(false)
+        setSelectedMessage(selectedMessage)
+    }
+
     return (
         <div className='d-flex flex-column max-h-100 p-4 border-0 rounded-2 shadow-sm'>
             {activeChat && messages && (
@@ -119,6 +127,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                                 setFocused(true)
                             }}
                             onFirstMessage={sendFirstMessage}
+                            selectedMessage={selectedMessage}
                         />
                     )}
                     {replyMessage && (
@@ -156,11 +165,28 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                 centered
                 footer={null}
                 title={<h3>{`Чат ${activeChat?.chatName}`}</h3>}
+                forceRender
             >
                 <Divider>
                     <h6 className="text-secondary">Функции</h6>
                 </Divider>
                 <Flex gap="small" vertical>
+                    <Button
+                        onClick={() => {
+                            setSelectedMessage(undefined);
+                            setMessageFinderOpen(true)
+                        }}
+                        size="small"
+                        icon={<i className="bi bi-search"/>}
+                        className="w-100"
+                    >
+                        Поиск по сообщениям
+                    </Button>
+                    <MessageFinder
+                        open={messageFinderOpen && modalOpen}
+                        onClose={() => setMessageFinderOpen(false)}
+                        onSelect={(msg) => onSelectMessage(msg)}
+                    />
                     {activeChat && user && activeChat.owner.id === user.id && (
                         <>
                             <Button

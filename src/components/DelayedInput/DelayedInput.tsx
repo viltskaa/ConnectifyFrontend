@@ -41,6 +41,7 @@ const DelayedInput = ({
             placeholder={placeholder}
             disabled={loading}
             allowClear
+            autoFocus
         />
     );
 };
