@@ -39,7 +39,7 @@ export type ContactRequestType = {
     cancelled: boolean
 }
 
-export type ContactRequestCreateType = {
-    fromUser: number,
-    toUser: number,
+export type ContactType = {
+    id: number
+    contact: UserType
 }

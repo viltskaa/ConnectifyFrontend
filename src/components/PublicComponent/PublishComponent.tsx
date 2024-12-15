@@ -31,7 +31,7 @@ const PublishComponent = ({onPublish, focused}: PublishComponentProps): React.Re
 
     return (
         <Flex gap={'small'}>
-            <TextArea ref={ref} value={text} onChange={onEnterText} placeholder="Message" autoSize/>
+            <TextArea autoFocus ref={ref} value={text} onChange={onEnterText} placeholder="Message" autoSize/>
             <Button disabled={text.length <= 0} onClick={() => onClickEnter()} type="primary">Send</Button>
         </Flex>
     );

@@ -10,11 +10,13 @@ import {UserType} from "./types.ts";
 export type UserContextType = {
     user?: UserType,
     setUser: (user: UserType) => void
+    logout: () => void
 }
 
 export const UserContext = React.createContext<UserContextType>({
     user: undefined,
     setUser: (user: UserType) => console.log(user),
+    logout: () => {}
 })
 
 createRoot(document.getElementById('root')!).render(<App/>,)

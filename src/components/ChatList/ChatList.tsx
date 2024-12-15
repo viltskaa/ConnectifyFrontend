@@ -1,38 +1,26 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {
     Avatar,
     Button,
-    ColorPicker,
     Flex,
-    Form,
-    FormProps,
-    Input,
     List,
-    Modal,
-    Select,
-    Space,
     Tabs,
     Tooltip
 } from "antd";
 import "./ChatList.css"
-import {ChatCreateType, ChatType} from "../../types.ts";
-import {useStomp} from "../../hooks/useStomp.ts";
-import {UserContext} from "../../main.tsx";
+import {ChatType} from "../../types.ts";
 import {useSelectedChat} from "../../hooks/useSelectedChat.ts";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/store.ts";
-import {icons} from "../../icons/icons.ts";
 import UsersSearch from "../UsersSearch/UsersSearch.tsx";
+import ChatCreate from "../ChatCreate/ChatCreate.tsx";
 
 
 const ChatList = (): React.ReactElement => {
-    const {chats} = useSelector((state: RootState) => state.chat);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const {chats} = useSelector((state: RootState) => state.chat);
     const {setSelectedChat} = useSelectedChat()
 
-    const {send, active} = useStomp()
-    const {user} = useContext(UserContext)
 
     const onChatSelectLocal = (chat: ChatType) => {
         if (setSelectedChat) {
@@ -41,13 +29,6 @@ const ChatList = (): React.ReactElement => {
     }
 
     const showModal = () => setIsModalOpen(true);
-
-    const onFinish: FormProps<ChatCreateType>['onFinish'] = (values) => {
-        if (user && user.id && active) {
-            send(`/app/createChat/${user.id}`, {...values, ownerId: user.id.toString()}, {})
-            setIsModalOpen(false);
-        }
-    };
 
     return (
         <div className="border-0 rounded-2 shadow-sm w-100 flex-grow-1 overflow-y-scroll overflow-visible p-4 px-3">
@@ -108,82 +89,10 @@ const ChatList = (): React.ReactElement => {
                     }
                 ]}
             />
-            <Modal
-                title={<h2>Chat Create</h2>}
-                centered
+            <ChatCreate
                 open={isModalOpen}
-                onCancel={() => setIsModalOpen(false)}
-                footer={null}>
-                <Form
-                    name="chat"
-                    layout="vertical"
-                    onFinish={onFinish}
-                    autoComplete="off"
-                >
-                    <Form.Item<ChatCreateType>
-                        label="Chat Name"
-                        name="name"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input chat name!',
-                            },
-                        ]}
-                    >
-                        <Input/>
-                    </Form.Item>
-
-                    <Form.Item<ChatCreateType>
-                        label="Chat Color"
-                        name="color"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please select chat color!',
-                            },
-                        ]}
-                        getValueProps={(value) => ({value: value})}
-                        normalize={(value) => value && `${value.toHexString()}`}
-                    >
-                        <ColorPicker/>
-                    </Form.Item>
-
-                    <Form.Item<ChatCreateType>
-                        label="Chat Icon"
-                        name="icon"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please select chat icon!',
-                            },
-                        ]}
-                    >
-                        <Select
-                            showSearch
-                            className='w-100'
-                            placeholder="Search to Select"
-                            optionFilterProp="label"
-                            filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                            }
-                            options={icons.map((value) => ({value: value.className, label: value.name}))}
-                            optionRender={(option) => (
-                                <Space>
-                                    <i className={option.data.value}></i>
-                                    {option.data.label}
-                                </Space>
-                            )}
-                        />
-                    </Form.Item>
-
-                    <Form.Item className="w-100 mb-0" label={null}>
-                        <Button type="primary" className="w-100" htmlType="submit">
-                            Create
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Modal
-            >
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 };

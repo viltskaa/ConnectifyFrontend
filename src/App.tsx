@@ -25,6 +25,8 @@ const loadUserFromLocalStorage = (): UserType | null => {
 
 const saveUserToLocalStorage = (user: UserType): void => localStorage.setItem('user', JSON.stringify(user))
 
+const deleteUserFromLocalStorage = (): void => localStorage.removeItem('user');
+
 
 const App = (): React.ReactElement => {
     const [user, setUser] = useState<UserType | null>(loadUserFromLocalStorage());
@@ -41,6 +43,11 @@ const App = (): React.ReactElement => {
 
     const {verify} = requests
 
+    const logout = () => {
+        setUser(null)
+        deleteUserFromLocalStorage()
+    }
+
     useEffect(() => {
         if (user === null) return
 
@@ -53,13 +60,8 @@ const App = (): React.ReactElement => {
             .then(data => {
                 console.log(data)
                 if (data) {
-                    setUserContext({
-                        user,
-                        setUser
-                    })
-
+                    setUserContext({user, setUser, logout})
                     setConfig(prev => ({...prev, connectHeaders: {authorization: `Bearer ${user.jwt}`}}))
-
                     saveUserToLocalStorage(user)
                 }
             })
@@ -81,7 +83,7 @@ const App = (): React.ReactElement => {
                     </ChatProvider>
                 </StompProvider>
             )}
-            {!userContext && (
+            {!user && (
                 <Flex className='h-100' align='center' justify='center' vertical>
                     <Card title={"Авторизация"} className="w-25">
                         <AuthComponent onFinish={setUser}/>

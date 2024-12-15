@@ -10,14 +10,14 @@ export type LayoutProps = {
 }
 
 const Layout = ({children}: LayoutProps) => {
-    const {user} = useContext(UserContext);
+    const {user, logout} = useContext(UserContext);
 
     return (
         <Flex className="h-100">
             <Flex style={{maxWidth: "25%"}} className="h-100 p-4 ps-4 pe-0 w-25" vertical>
                 <ChatList/>
                 <Divider/>
-                <UserProfile onLeave={() => {}} user={user} />
+                <UserProfile onLeave={logout} user={user} />
             </Flex>
             {children}
         </Flex>

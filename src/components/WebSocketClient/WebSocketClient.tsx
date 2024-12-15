@@ -2,8 +2,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {useContext, useEffect} from "react";
 import {useStomp} from "../../hooks/useStomp.ts";
 import {UserContext} from "../../main.tsx";
-import {ChatType, ContactRequestType, MessageType} from "../../types.ts";
-import {addChat, addMessage, addRequest} from "../../slices/chatSlice.ts";
+import {ChatType, ContactType, ContactRequestType, MessageType} from "../../types.ts";
+import {addChat, addContact, addMessage, addRequest, removeRequest} from "../../slices/chatSlice.ts";
 import {RootState} from "../../store/store.ts";
 
 const WebSocketClient = () => {
@@ -41,10 +41,20 @@ const WebSocketClient = () => {
 
         subscribe(`/topic/cancelRequest/${user.id}`, (request: ContactRequestType) => {
             dispatch(addRequest(request))
+            dispatch(removeRequest(request.id))
         })
 
-        subscribe(`/topic/approveRequests/${user.id}`, (request: ContactRequestType) => {
+        subscribe(`/topic/approveRequest/${user.id}`, (request: ContactRequestType) => {
             dispatch(addRequest(request))
+            dispatch(removeRequest(request.id))
+        })
+
+        subscribe(`/app/contacts/${user.id}`, (contacts: ContactType[]) => {
+            contacts.forEach((contact: ContactType) => dispatch(addContact(contact)))
+        })
+
+        subscribe(`/topic/addContact/${user.id}`, (contact: ContactType) => {
+            dispatch(addContact(contact))
         })
 
         return () => {
@@ -53,6 +63,7 @@ const WebSocketClient = () => {
             unsubscribe(`/app/history/${user.id}`)
             unsubscribe(`/topic/requests/${user.id}`)
             unsubscribe(`/app/historyRequests/${user.id}`)
+            unsubscribe(`/app/contacts/${user.id}`)
         }
     }, [dispatch, active, user]);
 

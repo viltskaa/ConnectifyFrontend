@@ -13,13 +13,14 @@ import {useStomp} from "../../hooks/useStomp.ts";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/store.ts";
 import ContactRequest from "../ContactRequest/ContactRequest.tsx";
+import Contact from "../Contact/Contact.tsx";
 
 const UsersSearch = (): React.ReactElement => {
     const [users, setUsers] = useState<UserType[]>()
     const [loading, setLoading] = useState<boolean>(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState<UserType>();
-    const {contactRequests} = useSelector((state: RootState) => state.chat);
+    const {contactRequests, contacts} = useSelector((state: RootState) => state.chat);
 
     const {send, active} = useStomp()
     const {user} = useContext(UserContext);
@@ -55,6 +56,7 @@ const UsersSearch = (): React.ReactElement => {
             fromUser: user.id.toString(),
             toUser: selectedUser.id.toString(),
         }, {})
+        setUsers(prevState => prevState && prevState.filter(x => x.id !== selectedUser.id))
 
         setIsModalOpen(false)
     }
@@ -68,15 +70,30 @@ const UsersSearch = (): React.ReactElement => {
                     timeoutValue={1000}
                     loading={loading}
                 />
-                <Divider/>
             </div>
             <div className="h-100">
-                {user && Object.values(contactRequests).flatMap(contact => (
-                    !contact.cancelled && <ContactRequest user={user} request={contact} key={contact.id} />
-                ))}
+                {contacts && Object.values(contacts).length > 0 && (
+                    <>
+                        <Divider>Контакты</Divider>
+                        {Object
+                            .values(contacts)
+                            .flatMap((contact) => <Contact contact={contact}/>)}
+                    </>
+                )}
+                {user && Object.values(contactRequests).filter(cr => !cr.cancelled && !cr.approved).length > 0 && (
+                    <>
+                        <Divider>Запросы</Divider>
+                        {user && Object.values(contactRequests).flatMap(contact => (
+                            !contact.cancelled
+                            && !contact.approved
+                            && <ContactRequest user={user} request={contact} key={contact.id} />
+                        ))}
+                    </>
+                )}
+
                 {users && users.length > 0 && !loading && (
                     <>
-                        <Divider/>
+                        <Divider>Глобальный поиск</Divider>
                         {users.map(user => (
                             <UserProfile
                                 onClick={() => selectUser(user)}
