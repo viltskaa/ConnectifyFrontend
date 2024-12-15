@@ -69,30 +69,38 @@ const ChatList = (): React.ReactElement => {
                                     dataSource={filteredChats}
                                     locale={{emptyText: "Чаты не найдены"}}
                                     renderItem={(item, index) => (
-                                        <List.Item className="chat-icon border-0" key={index}
-                                                   onClick={() => onChatSelectLocal(item)}>
-                                            <Flex align='center' gap={"small"}>
-                                                <Avatar
-                                                    style={{
-                                                        color: item.color,
-                                                        backgroundColor: "#ffffff00",
-                                                    }}
-                                                    className="border-0 shadow-sm"
-                                                    shape="square"
-                                                    icon={(<i className={item.icon || "bi bi-chat-left"}></i>)}
-                                                />
-                                                <Flex vertical>
-                                                    <span className="text-truncate mb-0 fw-bold">{item.chatName}</span>
-                                                    {item.lastMessage && (
-                                                        <small
-                                                            className='text-secondary'><b>{item.lastMessage.author.username}</b>: {item.lastMessage.text}
-                                                        </small>
-                                                    )}
-                                                    {!item.lastMessage && (
-                                                        <small className='text-secondary'>Сообщений пока нет</small>
-                                                    )}
-                                                </Flex>
-                                            </Flex>
+                                        <List.Item
+                                            className="chat-icon border-0"
+                                            key={index}
+                                            onClick={() => onChatSelectLocal(item)}
+                                        >
+                                            <List.Item.Meta
+                                                avatar={
+                                                    <Avatar
+                                                        style={{
+                                                            color: item.color,
+                                                            backgroundColor: "#ffffff00",
+                                                        }}
+                                                        className="border-0 shadow-sm chat-avatar"
+                                                        shape="square"
+                                                        icon={(<i className={item.icon || "bi bi-chat-left"}></i>)}
+                                                    />
+                                                }
+                                                title={<span
+                                                    className="text-truncate mb-0 fw-bold">{item.chatName}</span>}
+                                                description={
+                                                    <>
+                                                        {item.lastMessage && (
+                                                            <small
+                                                                className='text-secondary'><b>{item.lastMessage.author.username}</b>: {item.lastMessage.text}
+                                                            </small>
+                                                        )}
+                                                        {!item.lastMessage && (
+                                                            <small className='text-secondary'>Сообщений пока нет</small>
+                                                        )}
+                                                    </>
+                                                }
+                                            />
                                         </List.Item>
                                     )}/>
                             </Flex>

@@ -8,3 +8,13 @@
     transform: scale(1.08);
     padding-left: 10px;
 }
+
+.chat-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0;
+}
+
+.chat-text {
+    flex-shrink: 1;
+}
