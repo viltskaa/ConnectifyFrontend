@@ -18,8 +18,28 @@ export type MessageProps = {
     reply?: MessageType
 }
 
-const Message = ({message, variant = "left", username, time, onOption, id, reply}: MessageProps): React.ReactElement => {
-    const onClick: MenuProps['onClick'] = ({ key }) => {
+
+const HighlightAtWords = (text: string, className?: string): React.ReactElement => {
+    const highlightedText = text.split(/(\s+)/).map((word, index) => {
+        if (word.startsWith("@")) {
+            return (<span key={index} className="text-primary fw-bold">{word}</span>);
+        }
+        return word;
+    });
+
+    return <pre className={className}>{highlightedText}</pre>;
+};
+
+const Message = ({
+                     message,
+                     variant = "left",
+                     username,
+                     time,
+                     onOption,
+                     id,
+                     reply
+                 }: MessageProps): React.ReactElement => {
+    const onClick: MenuProps['onClick'] = ({key}) => {
         console.log(key, message);
         if (onOption) onOption(key as MessageOptions, id)
     };
@@ -32,7 +52,7 @@ const Message = ({message, variant = "left", username, time, onOption, id, reply
                 src={`https://api.dicebear.com/9.x/initials/svg?seed=${username}`}
             />
             <Card>
-                <Dropdown disabled={!onOption} menu={{ items, onClick }} placement="bottom" arrow={{ pointAtCenter: true }}>
+                <Dropdown disabled={!onOption} menu={{items, onClick}} placement="bottom" arrow={{pointAtCenter: true}}>
                     <Flex className="message-text px-1" vertical>
                         {reply && (
                             <Flex className="border rounded-2 p-1 mb-2 opacity-100 bg-light z-2 message-reply" vertical>
@@ -40,7 +60,7 @@ const Message = ({message, variant = "left", username, time, onOption, id, reply
                                 <small className="fw-light text-truncate">{reply.text}</small>
                             </Flex>
                         )}
-                        <pre className="mb-0">{message}</pre>
+                        {HighlightAtWords(message, "mb-0")}
                         {time && (
                             <small className="text-end text-secondary message-time">
                                 {dayjs(time).format('HH:mm')}

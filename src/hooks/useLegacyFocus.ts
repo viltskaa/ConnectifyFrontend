@@ -1,7 +1,8 @@
 import {useRef} from "react";
+import {MentionsRef} from "antd/es/mentions";
 
-export const useFocus = <T extends HTMLElement>() => {
-    const htmlElRef = useRef<T>(null)
+export const useLegacyFocus = () => {
+    const htmlElRef = useRef<MentionsRef>(null)
 
     const setFocus = () => {
         if (htmlElRef && htmlElRef.current){

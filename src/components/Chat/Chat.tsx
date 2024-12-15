@@ -92,7 +92,13 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                             </Tooltip>
                         </Flex>
                     )}
-                    <PublishComponent focused={focused} onPublish={sendMessage}/>
+                    {user && (
+                        <PublishComponent
+                            users={activeChat?.users.filter(chatUser => chatUser.id !== user.id)}
+                            focused={focused}
+                            onPublish={sendMessage}
+                        />
+                    )}
                 </>
             )}
             {!activeChat && (
