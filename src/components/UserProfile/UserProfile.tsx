@@ -2,14 +2,27 @@ import React from 'react';
 import {Avatar, Button, Flex, Tooltip} from "antd";
 import {UserType} from "../../types.ts";
 
+type ButtonConfig = {
+    icon: string,
+    type: "link" | "default" | "text" | "primary" | "dashed" | undefined,
+    tooltipTitle: string,
+    onClick?: () => void,
+}
+
 type UserProfileProps = {
     user?: UserType
     className?: string
     onClick?: () => void
-    onLeave?: () => void
+    rightButtonConfig?: ButtonConfig
 }
 
-const UserProfile = ({user, className, onClick, onLeave}: UserProfileProps): React.ReactElement => {
+const UserProfile = (
+    {
+        user,
+        className,
+        onClick,
+        rightButtonConfig,
+    }: UserProfileProps): React.ReactElement => {
     return (
         <Flex
             onClick={() => onClick && onClick()}
@@ -27,9 +40,18 @@ const UserProfile = ({user, className, onClick, onLeave}: UserProfileProps): Rea
                     <small className="ms-1 text-primary"><b>@</b>{user.username}</small>
                 </div>
             )}
-            {onLeave && (
-                <Tooltip title="Выйти">
-                    <Button type="link" icon={<i className="bi bi-box-arrow-right"></i>} onClick={onLeave}/>
+            {rightButtonConfig
+                && rightButtonConfig.onClick
+                && rightButtonConfig.tooltipTitle
+                && rightButtonConfig.type
+                && rightButtonConfig.icon
+                && (
+                <Tooltip title={rightButtonConfig.tooltipTitle}>
+                    <Button
+                        type={rightButtonConfig.type}
+                        icon={<i className={rightButtonConfig.icon}></i>}
+                        onClick={rightButtonConfig.onClick}
+                    />
                 </Tooltip>
             )}
         </Flex>

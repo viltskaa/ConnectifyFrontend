@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {ChatType, ContactType, MessageType} from "../../types.ts";
+import {ChatType, ContactType, MessageType, UserType} from "../../types.ts";
 import Messages from "../Messages/Messages.tsx";
 import PublishComponent from "../PublishComponent/PublishComponent.tsx";
 import {Avatar, Button, Divider, Flex, List, message, Modal, Popconfirm, Tooltip} from "antd";
@@ -58,6 +58,14 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
         setModalOpen(false)
         dispatch(setActiveChat(null))
         message.success(`Вы успешно вышли из чата ${activeChat.chatName}`).then(() => {})
+    }
+
+    const deleteFromChat = (userInChat: UserType) => {
+        if (!activeChat || !active || !userInChat) return;
+
+        send(`/app/leaveChat/${activeChat.id}`, {userId: userInChat.id.toString()}, {})
+        setModalOpen(false)
+        message.success(`Вы успешно выгнали ${userInChat.username} из чата ${activeChat.chatName}`).then(() => {})
     }
 
     const appendChat = (contacts: ContactType[]) => {
@@ -206,7 +214,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                     <h6 className="text-secondary">Создатель</h6>
                 </Divider>
                 <UserProfile user={activeChat?.owner}/>
-                {activeChat && activeChat.users && activeChat.users.length > 1 && (
+                {activeChat && user && activeChat.users && activeChat.users.length > 1 && (
                     <>
                         <Divider>
                             <h6 className="text-secondary">Участники</h6>
@@ -216,7 +224,16 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                             dataSource={activeChat.users.filter(x => x.id !== activeChat.owner.id)}
                             renderItem={(item, index) => (
                                 <List.Item>
-                                    <UserProfile user={item} key={index}/>
+                                    <UserProfile
+                                        user={item}
+                                        key={index}
+                                        rightButtonConfig={activeChat.owner.id === user.id ? {
+                                            icon: "bi bi-person-dash",
+                                            tooltipTitle: "Выгнать",
+                                            type: "link",
+                                            onClick: () => deleteFromChat(item),
+                                        } : undefined}
+                                    />
                                 </List.Item>
                             )}
                         />

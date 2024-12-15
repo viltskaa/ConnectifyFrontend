@@ -17,7 +17,15 @@ const Layout = ({children}: LayoutProps) => {
             <Flex style={{maxWidth: "25%"}} className="h-100 p-4 ps-4 pe-0 w-25" vertical>
                 <ChatList/>
                 <Divider/>
-                <UserProfile onLeave={logout} user={user} />
+                <UserProfile
+                    rightButtonConfig={{
+                        icon: "bi bi-box-arrow-right fs-5",
+                        tooltipTitle: "Выйти",
+                        type: "link",
+                        onClick: logout
+                    }}
+                    user={user}
+                />
             </Flex>
             {children}
         </Flex>
