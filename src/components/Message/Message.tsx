@@ -7,7 +7,7 @@ import {MessageType} from "../../types.ts";
 import dayjs from "dayjs";
 import HighlightAtWords from "../HighlightAtWords/HighlightAtWords.tsx";
 
-export type MessageOptions = "reply" | "forward" | "copy" | "like"
+export type MessageOptions = "reply" | "forward" | "copy" | "ai"
 
 export type MessageProps = {
     message: string;

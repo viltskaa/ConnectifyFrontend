@@ -21,9 +21,4 @@ export const items: MenuProps['items'] = [
         icon: <i className="bi bi-stars text-primary"></i>,
         label: (<span>AI помощь</span>)
     },
-    {
-        key: 'like',
-        icon: <i className="bi bi-heart-fill text-danger"></i>,
-        label: (<span>Реакция</span>)
-    },
 ];

@@ -45,6 +45,8 @@ const UsersModal = ({open, onClose, onFinish, chatUsers}: UsersModalProps): Reac
             onCancel={onClose}
             centered
             footer={null}
+            forceRender
+            destroyOnClose
         >
             <Flex gap="small" vertical>
                 {availableContacts && availableContacts.length == 0 && (

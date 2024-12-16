@@ -29,7 +29,7 @@ type ChatUpdateType = {
     color: string,
 }
 
-const ChatUpdate = ({open, onClose, chat}: ChatUpdateProps): React.ReactElement => {
+const ChatUpdateModal = ({open, onClose, chat}: ChatUpdateProps): React.ReactElement => {
     const [form] = Form.useForm<ChatUpdateType>();
     const {send, active} = useStomp()
     const [canUpdate, setCanUpdate] = useState<boolean>(true)
@@ -65,7 +65,10 @@ const ChatUpdate = ({open, onClose, chat}: ChatUpdateProps): React.ReactElement 
             centered
             open={open}
             onCancel={() => onClose()}
-            footer={null}>
+            footer={null}
+            forceRender
+            destroyOnClose
+        >
             <Form
                 form={form}
                 name="chat"
@@ -165,4 +168,4 @@ const ChatUpdate = ({open, onClose, chat}: ChatUpdateProps): React.ReactElement 
     );
 };
 
-export default ChatUpdate;
+export default ChatUpdateModal;

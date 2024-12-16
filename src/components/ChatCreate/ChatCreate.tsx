@@ -27,7 +27,7 @@ type ChatCreateProps = {
 }
 
 const ChatCreate = ({open, onClose}: ChatCreateProps): React.ReactElement => {
-    const [form] = Form.useForm();
+    const [form] = Form.useForm<ChatCreateType>();
     const {send, active} = useStomp()
     const {user} = useContext(UserContext)
     const {contacts} = useSelector((state: RootState) => state.chat);

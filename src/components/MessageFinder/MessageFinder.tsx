@@ -33,6 +33,13 @@ const MessageFinder = ({open, onClose, onSelect}: MessageFinderProps): React.Rea
             .filter(msg => msg.text.toLowerCase().includes(value.toLowerCase())));
     }
 
+    const onSelectLocal = (msg: MessageType) => {
+        onClose()
+        if (onSelect) {
+            onSelect(msg);
+        }
+    }
+
     return (
         <Modal
             title={"Поиск по сообщениям"}
@@ -43,6 +50,8 @@ const MessageFinder = ({open, onClose, onSelect}: MessageFinderProps): React.Rea
             }}
             centered
             footer={null}
+            forceRender
+            destroyOnClose
         >
             <Flex gap={"small"} vertical>
                 <DelayedInput
@@ -56,7 +65,7 @@ const MessageFinder = ({open, onClose, onSelect}: MessageFinderProps): React.Rea
                 <Flex style={{maxHeight: "60vh"}} className="overflow-y-scroll" gap={"small"} vertical>
                     {filteredMessages.length > 0 && filteredMessages.map((msg: MessageType) => (
                         <Flex
-                            onClick={() => onSelect && onSelect(msg)}
+                            onClick={() => onSelectLocal(msg)}
                             key={msg.id}
                             align='center'
                             className={`message ${user?.username !== msg.author.username ? "message_left" : "message_right"}`}

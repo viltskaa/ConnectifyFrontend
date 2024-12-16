@@ -10,7 +10,7 @@ import UserProfile from "../UserProfile/UserProfile.tsx";
 import {setActiveChat, setForwardMessage} from "../../slices/chatSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import UsersModal from "../UsersModal/UsersModal.tsx";
-import ChatUpdate from "../ChatUpdate/ChatUpdate.tsx";
+import ChatUpdateModal from "../ChatUpdate/ChatUpdateModal.tsx";
 import MessageFinder from "../MessageFinder/MessageFinder.tsx";
 import ChatSelectModal from "../ChatsSelectModal/ChatSelectModal.tsx";
 import {RootState} from "../../store/store.ts";
@@ -193,7 +193,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                 centered
                 footer={null}
                 title={<h3>{activeChat?.chatName}</h3>}
-                forceRender
+                destroyOnClose
             >
                 <Divider>
                     <h6 className="text-secondary">Функции</h6>
@@ -211,7 +211,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                         Поиск по сообщениям
                     </Button>
                     <MessageFinder
-                        open={messageFinderOpen && modalOpen}
+                        open={messageFinderOpen}
                         onClose={() => setMessageFinderOpen(false)}
                         onSelect={(msg) => onSelectMessage(msg)}
                     />
@@ -225,7 +225,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                             >
                                 Изменить настройки чата
                             </Button>
-                            <ChatUpdate
+                            <ChatUpdateModal
                                 open={chatEditModalOpen}
                                 onClose={() => setChatEditModalOpen(false)}
                                 chat={activeChat}
