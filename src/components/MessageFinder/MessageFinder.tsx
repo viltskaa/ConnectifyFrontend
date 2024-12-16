@@ -76,12 +76,12 @@ const MessageFinder = ({open, onClose, onSelect}: MessageFinderProps): React.Rea
                                 size={"small"}
                                 src={`https://api.dicebear.com/9.x/initials/svg?seed=${msg.author.username}`}
                             />
-                            <Card>
+                            <Card style={{maxWidth: "90%"}}>
                                 <Tooltip title={"Перейти к сообщению"}>
                                     <Flex className="message-text px-1" gap="small" align='center'>
                                         <HighlightAtWords
                                             text={msg.text}
-                                            className="mb-0"
+                                            className="mb-0 pre-wrap"
                                         />
                                         {msg.timestamp && (
                                             <small className="text-secondary message-time">

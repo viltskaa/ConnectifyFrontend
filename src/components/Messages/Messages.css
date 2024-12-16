@@ -13,7 +13,7 @@
     border-radius: 0.2rem;
 }
 
-.highlight {
+.highlight > div {
     background-color: rgba(255, 255, 0, 0.57);
     transition: background-color 0.5s ease;
 }

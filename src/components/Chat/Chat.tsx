@@ -15,6 +15,7 @@ import MessageFinder from "../MessageFinder/MessageFinder.tsx";
 import ChatSelectModal from "../ChatsSelectModal/ChatSelectModal.tsx";
 import {RootState} from "../../store/store.ts";
 import UserProfileModal from "../UserProfileModal/UserProfileModal.tsx";
+import AiHelpModal from "../AiHelpModal/AiHelpModal.tsx";
 
 export type ChatProps = {
     loading?: boolean;
@@ -35,6 +36,8 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const [selectedMessage, setSelectedMessage] = useState<MessageType>()
     const [userProfileOpenModal, setUserProfileOpenModal] = useState<boolean>(false)
     const [activeUserAvatar, setActiveUserAvatar] = useState<UserType>()
+    const [aiHelpModalOpen, setAiHelpModalOpen] = useState<boolean>(false)
+    const [aiHelpMessage, setAiHelpMessage] = useState<string | null>(null)
     const {send, active} = useStomp()
     const dispatch = useDispatch();
     const {user} = useContext(UserContext)
@@ -56,7 +59,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
             chatId: activeChat.id.toString(),
             type: "COMMON"
         }
-        send(`/app/sendMessage/${user.id}`, message, {})
+        send(`/app/sendMessage/${activeChat.id}`, message, {})
         if (replyMessage) {
             setReplyMessage(undefined)
         }
@@ -125,6 +128,11 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
         setUserProfileOpenModal(true)
     }
 
+    const onAiHelp = (message: MessageType) => {
+        setAiHelpMessage(message.text)
+        setAiHelpModalOpen(true)
+    }
+
     return (
         <div className='d-flex flex-column max-h-100 p-4 border-0 rounded-2 shadow-sm'>
             {activeChat && messages && (
@@ -162,6 +170,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                                 setFocused(true)
                             }}
                             onForward={onForwardMessageSelect}
+                            onAiHelp={onAiHelp}
                             onFirstMessage={sendFirstMessage}
                             selectedMessage={selectedMessage}
                             onAvatarClick={onAvatarClick}
@@ -326,6 +335,13 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                     open={userProfileOpenModal}
                     onClose={() => setUserProfileOpenModal(false)}
                     user={activeUserAvatar}
+                />
+            )}
+            {aiHelpMessage && (
+                <AiHelpModal
+                    open={aiHelpModalOpen}
+                    onClose={() => setAiHelpModalOpen(false)}
+                    messageToExplain={aiHelpMessage}
                 />
             )}
         </div>

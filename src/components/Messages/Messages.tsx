@@ -11,6 +11,7 @@ export type MessagesProps = {
     loading?: boolean
     onReply?: (reply: MessageType) => void
     onForward?: (forward: MessageType) => void
+    onAiHelp?: (aiHelp: MessageType) => void
     onFirstMessage?: () => void
     selectedMessage?: MessageType
     onAvatarClick?: (user: UserType) => void
@@ -22,6 +23,7 @@ const Messages = ({
                       loading,
                       onReply,
                       onForward,
+                      onAiHelp,
                       onFirstMessage,
                       selectedMessage,
                       onAvatarClick,
@@ -67,6 +69,11 @@ const Messages = ({
                 navigator.clipboard
                     .writeText(copyMessage.text)
                     .then(() => message.success("Успешно копирование"))
+            }
+        } else if (onAiHelp && option === 'ai') {
+            const aiMessage = messages.find(e => e.id === id)
+            if (aiMessage) {
+                onAiHelp(aiMessage)
             }
         }
     }

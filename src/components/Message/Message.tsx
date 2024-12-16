@@ -43,7 +43,7 @@ const Message = ({
                 shape="square"
                 src={`https://api.dicebear.com/9.x/initials/svg?seed=${username}`}
             />
-            <Card>
+            <Card className="message-body">
                 <Dropdown disabled={!onOption} menu={{items, onClick}} placement="bottom" arrow={{pointAtCenter: true}}>
                     <Flex className="message-text px-1" vertical>
                         {reply && (
@@ -54,7 +54,7 @@ const Message = ({
                         )}
                         <HighlightAtWords
                             text={message}
-                            className="mb-0"
+                            className="mb-0 pre-wrap"
                         />
                         {time && (
                             <small className="text-end text-secondary message-time">

@@ -93,7 +93,11 @@ const ChatList = (): React.ReactElement => {
                                                     <>
                                                         {item.lastMessage && (
                                                             <small
-                                                                className='text-secondary'><b>{item.lastMessage.author.username}</b>: {item.lastMessage.text}
+                                                                style={{maxWidth: "90%"}}
+                                                                className='d-inline-block text-secondary text-truncate'
+                                                            >
+                                                                <b>{item.lastMessage.author.username}</b>:
+                                                                {item.lastMessage.text}
                                                             </small>
                                                         )}
                                                         {!item.lastMessage && (
