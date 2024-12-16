@@ -1,9 +1,12 @@
 export type UserType = {
     id: number;
     username: string;
+    email: string;
     jwt: string;
     online: boolean;
     lastSeen?: number;
+    bio: string;
+    contacts: ContactType[]
 }
 
 export type MessageCodeType = "ENTER" | "LEAVE" | "INVITE" | "COMMON" | null

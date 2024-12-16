@@ -92,6 +92,10 @@ const WebSocketClient = () => {
             dispatch(updateChat(chat))
         })
 
+        subscribe(`/topic/deleteChat/${user.id}`, (chatId: number) => {
+            dispatch(deleteChat(chatId))
+        })
+
         return () => {
             unsubscribe(`/app/chats/${user.id}`)
             unsubscribe(`/topic/chats/${user.id}`)
@@ -100,6 +104,7 @@ const WebSocketClient = () => {
             unsubscribe(`/app/historyRequests/${user.id}`)
             unsubscribe(`/app/contacts/${user.id}`)
             unsubscribe(`/topic/leaveChat/${user.id}`)
+            unsubscribe(`/topic/deleteChat/${user.id}`)
         }
     }, [dispatch, active, user]);
 
@@ -111,15 +116,11 @@ const WebSocketClient = () => {
                 dispatch(addMessage(message))
                 sendNotification(message)
             });
-            subscribe(`/topic/deleteChat/${id}`, (chatId: number) => {
-                dispatch(deleteChat(chatId))
-            })
         })
 
         return () => {
             Object.values(chats).flat().forEach(({id}: ChatType) => {
                 unsubscribe(`/topic/messages/${id}`)
-                unsubscribe(`/topic/deleteChat/${id}`)
             })
         }
 

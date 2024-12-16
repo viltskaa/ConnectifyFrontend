@@ -1,9 +1,10 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {Divider, Flex} from "antd";
 import './Layout.css'
 import ChatList from "../ChatList/ChatList.tsx";
 import UserProfile from "../UserProfile/UserProfile.tsx";
 import {UserContext} from "../../main.tsx";
+import UserProfileModal from "../UserProfileModal/UserProfileModal.tsx";
 
 export type LayoutProps = {
     children: React.ReactElement | React.ReactElement[] | string[] | string;
@@ -11,6 +12,7 @@ export type LayoutProps = {
 
 const Layout = ({children}: LayoutProps) => {
     const {user, logout} = useContext(UserContext);
+    const [userProfileOpenModal, setUserProfileOpenModal] = useState<boolean>(false);
 
     return (
         <Flex className="h-100">
@@ -18,6 +20,8 @@ const Layout = ({children}: LayoutProps) => {
                 <ChatList/>
                 <Divider/>
                 <UserProfile
+                    onClick={() => setUserProfileOpenModal(true)}
+                    className="hover-scale"
                     rightButtonConfig={{
                         icon: "bi bi-box-arrow-right fs-5",
                         tooltipTitle: "Выйти",
@@ -26,6 +30,13 @@ const Layout = ({children}: LayoutProps) => {
                     }}
                     user={user}
                 />
+                {user && (
+                    <UserProfileModal
+                        open={userProfileOpenModal}
+                        onClose={() => setUserProfileOpenModal(false)}
+                        user={user}
+                    />
+                )}
             </Flex>
             {children}
         </Flex>

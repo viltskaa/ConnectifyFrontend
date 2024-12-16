@@ -14,6 +14,7 @@ import ChatUpdateModal from "../ChatUpdate/ChatUpdateModal.tsx";
 import MessageFinder from "../MessageFinder/MessageFinder.tsx";
 import ChatSelectModal from "../ChatsSelectModal/ChatSelectModal.tsx";
 import {RootState} from "../../store/store.ts";
+import UserProfileModal from "../UserProfileModal/UserProfileModal.tsx";
 
 export type ChatProps = {
     loading?: boolean;
@@ -32,6 +33,8 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const [messageFinderOpen, setMessageFinderOpen] = useState<boolean>(false)
     const [chatSelectModalOpen, setChatSelectModalOpen] = useState<boolean>(false)
     const [selectedMessage, setSelectedMessage] = useState<MessageType>()
+    const [userProfileOpenModal, setUserProfileOpenModal] = useState<boolean>(false)
+    const [activeUserAvatar, setActiveUserAvatar] = useState<UserType>()
     const {send, active} = useStomp()
     const dispatch = useDispatch();
     const {user} = useContext(UserContext)
@@ -117,6 +120,11 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
         dispatch(setActiveChat(chat))
     }
 
+    const onAvatarClick = (user: UserType) => {
+        setActiveUserAvatar(user)
+        setUserProfileOpenModal(true)
+    }
+
     return (
         <div className='d-flex flex-column max-h-100 p-4 border-0 rounded-2 shadow-sm'>
             {activeChat && messages && (
@@ -156,6 +164,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                             onForward={onForwardMessageSelect}
                             onFirstMessage={sendFirstMessage}
                             selectedMessage={selectedMessage}
+                            onAvatarClick={onAvatarClick}
                         />
                     )}
                     {replyMessage && (
@@ -312,6 +321,13 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                 onSelect={onSelectChatToForwardMessage}
                 onCancel={onCancelForwardMessage}
             />
+            {activeUserAvatar && (
+                <UserProfileModal
+                    open={userProfileOpenModal}
+                    onClose={() => setUserProfileOpenModal(false)}
+                    user={activeUserAvatar}
+                />
+            )}
         </div>
     );
 };

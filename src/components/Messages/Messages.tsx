@@ -13,6 +13,7 @@ export type MessagesProps = {
     onForward?: (forward: MessageType) => void
     onFirstMessage?: () => void
     selectedMessage?: MessageType
+    onAvatarClick?: (user: UserType) => void
 }
 
 const Messages = ({
@@ -22,7 +23,8 @@ const Messages = ({
                       onReply,
                       onForward,
                       onFirstMessage,
-                      selectedMessage
+                      selectedMessage,
+                      onAvatarClick,
                   }: MessagesProps): React.ReactElement => {
     const ref = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -89,6 +91,7 @@ const Messages = ({
                     time={message.timestamp}
                     onOption={onOption}
                     reply={message.replyTo}
+                    onAvatarClick={() => onAvatarClick && onAvatarClick(message.author)}
                 />
             )))}
             {loading && (

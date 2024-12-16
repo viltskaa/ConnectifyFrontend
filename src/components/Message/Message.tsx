@@ -16,7 +16,8 @@ export type MessageProps = {
     username?: string
     time?: number
     onOption?: (option: MessageOptions, id: number) => void
-    reply?: MessageType
+    reply?: MessageType,
+    onAvatarClick?: () => void,
 }
 
 const Message = ({
@@ -26,7 +27,8 @@ const Message = ({
                      time,
                      onOption,
                      id,
-                     reply
+                     reply,
+                     onAvatarClick,
                  }: MessageProps): React.ReactElement => {
     const onClick: MenuProps['onClick'] = ({key}) => {
         console.log(key, message);
@@ -36,6 +38,7 @@ const Message = ({
     return (
         <div className={`message message_${variant} p-1`}>
             <Avatar
+                onClick={() => onAvatarClick && onAvatarClick()}
                 className={"message_avatar border-0 shadow-sm"}
                 shape="square"
                 src={`https://api.dicebear.com/9.x/initials/svg?seed=${username}`}
