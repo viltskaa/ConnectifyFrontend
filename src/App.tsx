@@ -12,6 +12,7 @@ import {Provider} from "react-redux";
 import store from "./store/store.ts";
 import WebSocketClient from "./components/WebSocketClient/WebSocketClient.tsx";
 import ChatWrapper from "./components/ChatWrapper/ChatWrapper.tsx";
+import NotificationProvider from "./providers/NotificationProvider.tsx";
 
 
 const loadUserFromLocalStorage = (): UserType | null => {
@@ -68,16 +69,18 @@ const App = (): React.ReactElement => {
     return (
         <>
             {userContext && user && (
-                <StompProvider config={config}>
-                    <UserContext.Provider value={userContext}>
-                        <Provider store={store}>
-                            <WebSocketClient/>
-                            <Layout>
-                                <ChatWrapper/>
-                            </Layout>
-                        </Provider>
-                    </UserContext.Provider>
-                </StompProvider>
+                <NotificationProvider>
+                    <StompProvider config={config}>
+                        <UserContext.Provider value={userContext}>
+                            <Provider store={store}>
+                                <WebSocketClient/>
+                                <Layout>
+                                    <ChatWrapper/>
+                                </Layout>
+                            </Provider>
+                        </UserContext.Provider>
+                    </StompProvider>
+                </NotificationProvider>
             )}
             {!user && (
                 <Flex className='h-100' align='center' justify='center' vertical>

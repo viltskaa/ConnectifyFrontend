@@ -58,7 +58,7 @@ const ChatSelectModal = ({open, onClose, onSelect, onCancel}: ChatSelectModalPro
                 )}
                 <Flex style={{maxHeight: "60vh"}} className="overflow-y-scroll" gap={"small"} vertical>
                     {filteredChats.length > 0 && filteredChats.map((chat: ChatType) => (
-                        <Tooltip title="Нажмите для выбора чата">
+                        <Tooltip key={chat.id} title="Нажмите для выбора чата">
                             <Flex
                                 className="chat-select mb-2"
                                 onClick={() => onSelect && onSelect(chat)}
