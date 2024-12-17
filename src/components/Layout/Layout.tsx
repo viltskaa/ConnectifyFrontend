@@ -16,7 +16,7 @@ const Layout = ({children}: LayoutProps) => {
 
     return (
         <Flex className="h-100">
-            <Flex style={{maxWidth: "25%"}} className="h-100 p-4 ps-4 pe-0 w-25" vertical>
+            <Flex style={{maxWidth: "25%", minWidth: "20%"}} className="h-100 p-4 ps-4 pe-0 w-25" vertical>
                 <ChatList/>
                 <Divider/>
                 <UserProfile

@@ -11,11 +11,13 @@ const get = async <DataType extends object | null, ReturnType> (
     url: string,
     params: DataType | undefined = undefined,
     jwt: string | undefined | null = undefined,
+    responseType: "blob" | "json" = "json",
 ) : Promise<ReturnType | Error> => {
     try {
         const {data} : AxiosResponse<ReturnType> = await axios.get(url, {
             params,
             withCredentials: false,
+            responseType: responseType,
             headers: {
                 "Content-Type": "application/json",
                 withCredentials: false,

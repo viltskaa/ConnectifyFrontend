@@ -7,6 +7,8 @@ type AiRequestData = { text: string };
 const requests = {
     getAiRequestData: (data: AiRequestData, jwt: string) =>
         post<AiRequestData, string>(`${host}/get`, data, null, jwt),
+    getAiDirectRequestData: (data: AiRequestData, jwt: string) =>
+        post<AiRequestData, string>(`${host}/direct`, data, null, jwt),
 }
 
 export default requests;

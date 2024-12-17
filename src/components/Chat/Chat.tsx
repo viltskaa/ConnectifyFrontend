@@ -16,6 +16,7 @@ import ChatSelectModal from "../ChatsSelectModal/ChatSelectModal.tsx";
 import {RootState} from "../../store/store.ts";
 import UserProfileModal from "../UserProfileModal/UserProfileModal.tsx";
 import AiHelpModal from "../AiHelpModal/AiHelpModal.tsx";
+import ExportModal from "../ExportModal/ExportModal.tsx";
 
 export type ChatProps = {
     loading?: boolean;
@@ -38,6 +39,7 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
     const [activeUserAvatar, setActiveUserAvatar] = useState<UserType>()
     const [aiHelpModalOpen, setAiHelpModalOpen] = useState<boolean>(false)
     const [aiHelpMessage, setAiHelpMessage] = useState<string | null>(null)
+    const [exportModalOpen, setExportModalOpen] = useState<boolean>(false)
     const {send, active} = useStomp()
     const dispatch = useDispatch();
     const {user} = useContext(UserContext)
@@ -248,9 +250,19 @@ const Chat = ({loading, messages, activeChat}: ChatProps): React.ReactElement =>
                                 onClose={() => setChatEditModalOpen(false)}
                                 chat={activeChat}
                             />
-                            <Button size="small" icon={<i className="bi bi-file-earmark-arrow-up"/>} className="w-100">
+                            <Button
+                                size="small"
+                                icon={<i className="bi bi-file-earmark-arrow-up"/>}
+                                className="w-100"
+                                onClick={() => setExportModalOpen(true)}
+                            >
                                 Экспорт чата
                             </Button>
+                            <ExportModal
+                                open={exportModalOpen}
+                                onClose={() => setExportModalOpen(false)}
+                                chatId={activeChat.id}
+                            />
                             <Button
                                 onClick={() => setUsersModalOpen(true)}
                                 size="small"
